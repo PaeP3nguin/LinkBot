@@ -6,7 +6,29 @@ MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 //   });
 // }).observe(document.body, {subtree: true, characterData: true});
 
+// Temporary placeholder for potentially conflicting email substitution
 var TEMP_CHAR = '\uFFFF';
+// Smallest possible link is something like m.co
+var MIN_LINK_SIZE = 4;
+// A collection of tags to not replace text inside of
+var EXCLUDED_TAGS = {
+  // Already clickable
+  'A': true,
+  'OPTION': true,
+
+  // May cause issues
+  'IFRAME': true,
+  'NOSCRIPT': true,
+  'SCRIPT': true,
+  'STYLE': true,
+  'META': true,
+
+  // Better UX if we don't
+  'CITE': true,
+  'TITLE': true,
+  'TEXTAREA': true,
+  'INPUT': true
+};
 
 function convertLinks() {
   var walker = document.createTreeWalker(
@@ -15,18 +37,6 @@ function convertLinks() {
     null,
     false
   );
-
-  var exclude = {
-    'A': true,
-    'IFRAME': true,
-    'OPTION': true,
-    'SCRIPT': true,
-    'STYLE': true,
-    'CITE': true,
-    'TITLE': true,
-    'TEXTAREA': true,
-    'INPUT': true
-  };
 
   var emails = [];
   var i = 0;
@@ -50,8 +60,8 @@ function convertLinks() {
 
     oldText = node.data;
 
-    // If we're one of the unwanted tags, don't do anything
-    if (node.parentElement && node.parentElement.tagName in exclude) {
+    if (!shouldExamine(node)) {
+      // Skip this node
       node = walker.nextNode();
       continue;
     }
@@ -75,6 +85,21 @@ function convertLinks() {
       node = walker.nextNode();
     }
   }
+}
+
+// Function to decide whether or not to bother examining a text node, returns a boolean
+function shouldExamine(node) {
+  // Check if text is in one of the excluded tags
+  if (node.parentElement && node.parentElement.tagName in EXCLUDED_TAGS) {
+    return false;
+  }
+  // Check if the text is too short to be a link
+  var text = node.data.trim();
+  if (text.length <= MIN_LINK_SIZE) {
+    return false;
+  }
+
+  return true;
 }
 
 setTimeout(convertLinks, 500);

@@ -41,35 +41,43 @@ URL regex modifications:
     (?:[01]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[01]?\d?\d|2[0-4]\d|25[0-5])){3}
     |
     // Host name
-    (?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)
+    (?:[a-z\u00a1-\uffff\d]-*)*[a-z\u00a1-\uffff\d]+
     // Domain name
-    (?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*
+    (?:\.(?:[a-z\u00a1-\uffff\d]-*)*[a-z\u00a1-\uffff\d]+)*
     // TLD
-    (?:\.(?:[a-z\u00a1-\uffff]{2,}))
+    \.
+    (?:com?|net|org|cc|in(?:fo)?|io|bi(?:z|d)|mobi|tv|bz|fm|am|me|
+        ly|gl|gdn?|do(?:wnload)?|
+        us|tk|cn|de|uk|ru|nl|eu|br|au|fr|it|pl|jp|ws|ca|ws|es|ch|be|im|pr|gs|nu|ie|mn|xn--[a-z\d-]{4,59}|
+        xyz|top?|wang|win|cl(?:ub|ick)|link|vip|online|science|site|racing|date|pw)
 )
 // Port number
 (?::\d{2,5})?
 // Everything else
-// End in something that isn't a quotation mark or whitespace
-(?:[/?#]\S*[^"\s])?
+// End in an alphanumeric
+(?:[/?#]\S*[a-z\u00a1-\uffff\d])?
 */
-var URL_REGEX = /(?:(?:https?|ftp):\/\/)?(?:(?:[01]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[01]?\d?\d|2[0-4]\d|25[0-5])){3}|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:[/?#]\S*[^"\s])?\b/gi;
+var URL_REGEX = /(?:(?:https?|ftp):\/\/)?(?:(?:[01]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[01]?\d?\d|2[0-4]\d|25[0-5])){3}|(?:[a-z\u00a1-\uffff\d]-*)*[a-z\u00a1-\uffff\d]+(?:\.(?:[a-z\u00a1-\uffff\d]-*)*[a-z\u00a1-\uffff\d]+)*\.(?:com?|net|org|cc|in(?:fo)?|io|bi(?:z|d)|mobi|tv|bz|fm|am|me|ly|gl|gdn?|do(?:wnload)?|us|tk|cn|de|uk|ru|nl|eu|br|au|fr|it|pl|jp|ws|ca|ws|es|ch|be|im|pr|gs|nu|ie|mn|xn--[a-z\d-]{4,59}|xyz|top?|wang|win|cl(?:ub|ick)|link|vip|online|science|site|racing|date|pw))(?::\d{2,5})?(?:[/?#]\S*[a-z\u00a1-\uffff\d])?/gi;
 
 
 /*
 // Everything before the @ sign
-(?:(?:[a-z\u00a1-\uffff\d!#$%&'*+/=?^_`{|}~-])+(?:\.[a-z\u00a1-\uffff\d!#$%&'*+/=?^_`{|}~-]+)*@)
+(?:[a-z\u00a1-\uffff\d!#$%&'*+/=?^_`{|}~-])+(?:\.[a-z\u00a1-\uffff\d!#$%&'*+/=?^_`{|}~-]+)*
+@
 (?:
     // IP address
     (?:[01]?\d?\d|2[0-4]\d|25[0-5])
     (?:\.(?:[01]?\d?\d|2[0-4]\d|25[0-5])){3}
     |
     // Host name
-    (?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)
+    (?:[a-z\u00a1-\uffff\d]-*)*[a-z\u00a1-\uffff\d]+
     // Domain name
-    (?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*
+    (?:\.(?:[a-z\u00a1-\uffff\d]-*)*[a-z\u00a1-\uffff\d]+)*
     // TLD
-    (?:\.(?:[a-z\u00a1-\uffff]{2,}))
+    \.
+    (?:[a-z\u00a1-\uffff]{2,})
 )
+// End in an alphanumeric
+[a-z\u00a1-\uffff\d]?
 */
-var EMAIL_REGEX = /(?:(?:[a-z\u00a1-\uffff\d!#$%&'*+/=?^_`{|}~-])+(?:\.[a-z\u00a1-\uffff\d!#$%&'*+/=?^_`{|}~-]+)*@)(?:(?:[01]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[01]?\d?\d|2[0-4]\d|25[0-5])){3}|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))/gi;
+var EMAIL_REGEX = /(?:[a-z\u00a1-\uffff\d!#$%&'*+/=?^_`{|}~-])+(?:\.[a-z\u00a1-\uffff\d!#$%&'*+/=?^_`{|}~-]+)*@(?:(?:[01]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[01]?\d?\d|2[0-4]\d|25[0-5])){3}|(?:[a-z\u00a1-\uffff\d]-*)*[a-z\u00a1-\uffff\d]+(?:\.(?:[a-z\u00a1-\uffff\d]-*)*[a-z\u00a1-\uffff\d]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))[a-z\u00a1-\uffff\d]?/gi;
