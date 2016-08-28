@@ -13,21 +13,21 @@ var MIN_LINK_SIZE = 4;
 // A collection of tags to not replace text inside of
 var EXCLUDED_TAGS = {
   // Already clickable
-  'A': true,
-  'OPTION': true,
+  A: true,
+  OPTION: true,
 
   // May cause issues
-  'IFRAME': true,
-  'NOSCRIPT': true,
-  'SCRIPT': true,
-  'STYLE': true,
-  'META': true,
+  IFRAME: true,
+  NOSCRIPT: true,
+  SCRIPT: true,
+  STYLE: true,
+  META: true,
 
   // Better UX if we don't
-  'CITE': true,
-  'TITLE': true,
-  'TEXTAREA': true,
-  'INPUT': true
+  CITE: true,
+  TITLE: true,
+  TEXTAREA: true,
+  INPUT: true
 };
 
 function convertLinks() {
@@ -46,7 +46,7 @@ function convertLinks() {
     return TEMP_CHAR;
   }
 
-  function getEmailTemp(match) {
+  function getEmailTemp() {
     return emails[i++];
   }
 
