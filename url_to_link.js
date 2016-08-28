@@ -70,7 +70,7 @@ function convertLinks() {
     var newText = oldText.replace(EMAIL_REGEX, replaceEmailTemp);
 
     // Replace URLs
-    newText = newText.replace(URL_REGEX, '<a href="http://$&">$&</a>');
+    newText = newText.replace(URL_REGEX, '<a href="//$1">$&</a>');
 
     // Put emails back in
     newText = newText.replace(TEMP_CHAR, getEmailTemp);
@@ -102,4 +102,4 @@ function shouldExamine(node) {
   return true;
 }
 
-setTimeout(convertLinks, 500);
+setTimeout(convertLinks, 1500);
