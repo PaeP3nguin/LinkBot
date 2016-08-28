@@ -31,60 +31,67 @@
  *   Split email into separate regex
  *   Disregard user:pass@example.com style urls
  *   Removed IP address exclusions, will match any IPv4 address from 0.0.0.0 to 255.255.255.255
- *   Explicit TLD list
+ *   Explicit TLD list of common TLDs
  *   Simplified host and domain matching
  *   Path must end in alphanumeric character or '='
  */
 
 /*
-// Start after word boundary
-\b
-// Protocol
-(?:(?:https?|ftp):\/\/)?
-((?:
-    // IP address
-    (?:[01]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[01]?\d?\d|2[0-4]\d|25[0-5])){3}
-    |
-    // Host name
-    (?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+
-    // Domain name
-    (?:\.(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+)*
-    // TLD
-    \.
-    (?:com?|net|org|edu|gov|cc|in(?:fo)?|io|bi(?:z|d)|mobi|tv|bz|fm|am|me|
-        ly|gl|gdn?|do(?:wnload)?|
-        us|tk|cn|de|uk|ru|nl|eu|br|au|fr|it|pl|jp|ws|ca|ws|es|ch|be|im|pr|gs|nu|ie|mn|xn--[a-z\d-]{4,59}|
-        xyz|top?|wang|win|cl(?:ub|ick)|link|vip|online|science|site|racing|date|pw)
-)
-// Port number
-(?::\d{2,5})?
-// Path; must end in an alphanumeric or '='
-(?:[\/?#]\S*[a-z\u00a1-\uffff\d=])?)
-// Overall URL ends at a word boundary
-\b
+  // Start after word boundary
+  \b
+    // Protocol
+    (?:(?:https?|ftp):\/\/)?
+    // Start of capture group for main url
+    ((?:
+        // IP address
+        (?:[01]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[01]?\d?\d|2[0-4]\d|25[0-5])){3}
+      |
+        // Host name
+        (?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+
+        // Domain name
+        (?:\.(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+)*
+        // TLD
+        \.
+        (?:
+          // Common
+          com?|net|org|edu|gov|cc|in(?:fo)?|io|bi(?:z|d)|mobi|tv|bz|fm|am|me|
+          // URL shorteners
+          ly|gl|gdn?|do(?:wnload)?|
+          // ccTLDs
+          us|tk|cn|de|uk|ru|nl|eu|br|au|fr|it|pl|jp|ws|ca|ws|es|ch|be|im|pr|gs|nu|ie|mn|xn--[a-z\d-]{4,59}|
+          // gTLDs
+          xyz|top?|wang|win|cl(?:ub|ick)|link|vip|online|science|site|racing|date|pw
+        )
+    )
+    // Port number
+    (?::\d{2,5})?
+    // Path; must end in an alphanumeric or '='
+    (?:[\/?#]\S*[a-z\u00a1-\uffff\d=])?)
+  // Overall URL ends at a word boundary
+  \b
 */
 var URL_REGEX = /\b(?:(?:https?|ftp):\/\/)?((?:(?:[01]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[01]?\d?\d|2[0-4]\d|25[0-5])){3}|(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+(?:\.(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+)*\.(?:com?|net|org|edu|gov|cc|in(?:fo)?|io|bi(?:z|d)|mobi|tv|bz|fm|am|me|ly|gl|gdn?|do(?:wnload)?|us|tk|cn|de|uk|ru|nl|eu|br|au|fr|it|pl|jp|ws|ca|ws|es|ch|be|im|pr|gs|nu|ie|mn|xn--[a-z\u00a1-\uffff\d-]{4,59}|xyz|top?|wang|win|cl(?:ub|ick)|link|vip|online|science|site|racing|date|pw))(?::\d{2,5})?(?:[\/?#]\S*[a-z\u00a1-\uffff\d=])?)\b/gi;
 
-
 /*
-//Start after word boundary
-\b
-// Everything before the @ sign
-(?:[a-z\u00a1-\uffff\d!#$%&'*+/=?^_`{|}~-])+(?:\.[a-z\u00a1-\uffff\d!#$%&'*+/=?^_`{|}~-]+)*
-@
-(?:
-    // IP address
-    (?:[01]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[01]?\d?\d|2[0-4]\d|25[0-5])){3}
-    |
-    // Host name
-    (?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+
-    // Domain name
-    (?:\.(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+)*
-    // TLD
-    \.
-    (?:[a-z\u00a1-\uffff]{2,})
-)
-// End in an alphanumeric
-[a-z\u00a1-\uffff\d]?
+  //Start after word boundary
+  \b
+    // Everything before the @ sign
+    (?:[a-z\u00a1-\uffff\d!#$%&'*+/=?^_`{|}~-])+(?:\.[a-z\u00a1-\uffff\d!#$%&'*+/=?^_`{|}~-]+)*
+      @
+    (?:
+        // IP address
+        (?:[01]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[01]?\d?\d|2[0-4]\d|25[0-5])){3}
+      |
+        // Host name
+        (?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+
+        // Domain name
+        (?:\.(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+)*
+        // TLD, allow any
+        \.
+        (?:[a-z\u00a1-\uffff]{2,})
+    )
+    // End in an alphanumeric
+    [a-z\u00a1-\uffff\d]?
+  \b
 */
-var EMAIL_REGEX = /\b(?:[a-z\u00a1-\uffff\d!#$%&'*+/=?^_`{|}~-])+(?:\.[a-z\u00a1-\uffff\d!#$%&'*+/=?^_`{|}~-]+)*@(?:(?:[01]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[01]?\d?\d|2[0-4]\d|25[0-5])){3}|(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+(?:\.(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))[a-z\u00a1-\uffff\d]?/gi;
+var EMAIL_REGEX = /\b(?:[a-z\u00a1-\uffff\d!#$%&'*+/=?^_`{|}~-])+(?:\.[a-z\u00a1-\uffff\d!#$%&'*+/=?^_`{|}~-]+)*@(?:(?:[01]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[01]?\d?\d|2[0-4]\d|25[0-5])){3}|(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+(?:\.(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))[a-z\u00a1-\uffff\d]?\b/gi;
