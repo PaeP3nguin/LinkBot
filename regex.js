@@ -21,22 +21,23 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-
-// Both regular expessions are derived from Diego Perini's excellent web URL regular expression
-// Gist link: https://gist.github.com/dperini/729294
-// The philosophy for both regexes is to match common examples for the best user experience, not to
-// adhere strictly to RFCs
-
+/**
+ * Both regular expessions are derived from Diego Perini's excellent web URL regular expression
+ * Original gist link: https://gist.github.com/dperini/729294
+ * The philosophy for both regexes is to match common examples for the best user experience, not to
+ * adhere strictly to RFCs
+ *
+ * Differences from original:
+ *   Split email into separate regex
+ *   Disregard user:pass@example.com style urls
+ *   Removed IP address exclusions, will match any IPv4 address from 0.0.0.0 to 255.255.255.255
+ *   Explicit TLD list
+ *   Simplified host and domain matching
+ *   Path must end in alphanumeric character or '='
+ */
 
 /*
-URL regex modifications:
-    No longer matches emails
-    Removed IP address exclusions, will match any IPv4 address from 0.0.0.0 to 255.255.255.255
-    Explicit TLD list
-    Simplified host and domain macthing
-    Must end in alphanumeric
-
-//Start after word boundary
+// Start after word boundary
 \b
 // Protocol
 (?:(?:https?|ftp):\/\/)?
@@ -57,11 +58,12 @@ URL regex modifications:
 )
 // Port number
 (?::\d{2,5})?
-// Everything else
-// End in an alphanumeric or '='
+// Path; must end in an alphanumeric or '='
 (?:[\/?#]\S*[a-z\u00a1-\uffff\d=])?)
+// Overall URL ends at a word boundary
+\b
 */
-var URL_REGEX = /\b(?:(?:https?|ftp):\/\/)?((?:(?:[01]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[01]?\d?\d|2[0-4]\d|25[0-5])){3}|(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+(?:\.(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+)*\.(?:com?|net|org|edu|gov|cc|in(?:fo)?|io|bi(?:z|d)|mobi|tv|bz|fm|am|me|ly|gl|gdn?|do(?:wnload)?|us|tk|cn|de|uk|ru|nl|eu|br|au|fr|it|pl|jp|ws|ca|ws|es|ch|be|im|pr|gs|nu|ie|mn|xn--[a-z\u00a1-\uffff\d-]{4,59}|xyz|top?|wang|win|cl(?:ub|ick)|link|vip|online|science|site|racing|date|pw))(?::\d{2,5})?(?:[\/?#]\S*[a-z\u00a1-\uffff\d=])?)/gi;
+var URL_REGEX = /\b(?:(?:https?|ftp):\/\/)?((?:(?:[01]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[01]?\d?\d|2[0-4]\d|25[0-5])){3}|(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+(?:\.(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+)*\.(?:com?|net|org|edu|gov|cc|in(?:fo)?|io|bi(?:z|d)|mobi|tv|bz|fm|am|me|ly|gl|gdn?|do(?:wnload)?|us|tk|cn|de|uk|ru|nl|eu|br|au|fr|it|pl|jp|ws|ca|ws|es|ch|be|im|pr|gs|nu|ie|mn|xn--[a-z\u00a1-\uffff\d-]{4,59}|xyz|top?|wang|win|cl(?:ub|ick)|link|vip|online|science|site|racing|date|pw))(?::\d{2,5})?(?:[\/?#]\S*[a-z\u00a1-\uffff\d=])?)\b/gi;
 
 
 /*
