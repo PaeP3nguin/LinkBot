@@ -26,6 +26,7 @@ var EXCLUDED_TAGS = {
   SCRIPT: true,
   STYLE: true,
   META: true,
+  EMBED: true,
 
   // Better UX if we don't, tags may be user input or contain HTML
   CITE: true,
