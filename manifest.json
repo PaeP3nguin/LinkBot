@@ -1,5 +1,5 @@
 {
-   "name": "Text to Link",
+   "name": "LinkBot",
    "version": "1.0",
    "manifest_version": 2,
    "description": "Convert URLs in text to proper, clickable hyperlinks",
