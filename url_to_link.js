@@ -1,10 +1,28 @@
 MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 
-// var observer = new MutationObserver(function(mutations) {
-//   mutations.forEach(function(mutation) {
-//     console.log(mutation.type);
-//   });
-// }).observe(document.body, {subtree: true, characterData: true});
+var observer = new MutationObserver(function(mutations) {
+  console.log('mutation!');
+  observer.disconnect();
+  mutations.forEach(function(m) {
+    if (m.type === "characterData") {
+      // console.log(m);
+    } else if (m.type === "childList") {
+      // console.log(m);
+      m.addedNodes.forEach(function(node) {
+        if (node.nodeType == Node.TEXT_NODE) {
+          linkifyNode(node);
+        } else {
+          convertLinks(node);
+        }
+      });
+    }
+  });
+  observer.observe(document.body, {
+    subtree: true,
+    characterData: true,
+    childList: true
+  });
+});
 
 // Temporary placeholder for potentially conflicting email substitution
 var TEMP_CHAR = '\uFFFF';
@@ -37,10 +55,10 @@ var EXCLUDED_TAGS = {
   CODE: true,
 };
 
-function convertLinks() {
-  // Initialize a TreeWalker to start looking at text in the body of the document
+function convertLinks(root) {
+  // Initialize a TreeWalker to start looking at text from the root node
   var walker = document.createTreeWalker(
-    document.body,
+    root,
     NodeFilter.SHOW_ALL, {
       acceptNode: excludeNodes
     },
@@ -48,40 +66,55 @@ function convertLinks() {
   );
 
   var node = walker.nextNode();
-  var oldText;
+
+  function nextNode() {
+    node = walker.nextNode();
+  }
 
   while (node !== null) {
-    // Reset email replacement variables
-    emails = [];
-    i = 0;
-
-    oldText = node.data;
-
-    // Save emails and replace with a temporary, noncharacter Unicode character
-    // We'll put the emails back in later
-    // Why? Because otherwise the part after the @ sign will be recognized and replaced as a URL!
-    var newText = oldText.replace(EMAIL_REGEX, stashEmail);
-
-    // Replace URLs with links
-    newText = newText.replace(URL_REGEX, '<a href="//$1">$&</a>');
-
-    // Put emails back in
-    newText = newText.replace(TEMP_CHAR_REGEX, getEmail);
-
-    if (newText !== oldText) {
-      // If we successfully added any links
-      console.log(newText);
-      // Get the next node before we add links the current one so we don't look at it again
-      var temp = $(node);
-      node = walker.nextNode();
-      temp.replaceWith(newText);
-    } else {
-      // No URLs or emails found, keep looking
-      node = walker.nextNode();
-    }
+    linkifyNode(node, nextNode, nextNode);
   }
 }
 
+function linkifyNode(node, onBeforeReplace, onSkipped) {
+  // Email saving variables and functions
+  var emails = [];
+  var i = 0;
+
+  function stashEmail(email) {
+    emails.push('<a href="mailto:' + email + '">' + email + '</a>');
+    return TEMP_CHAR;
+  }
+
+  function getEmail() {
+    return emails[i++];
+  }
+
+  // Save the text to compare with later
+  var oldText = node.data;
+
+  // Save emails and replace with a temporary, noncharacter Unicode character
+  // We'll put the emails back in later
+  // Why? Because otherwise the part after the @ sign will be recognized and replaced as a URL!
+  var newText = oldText.replace(EMAIL_REGEX, stashEmail);
+
+  // Replace URLs with links
+  newText = newText.replace(URL_REGEX, '<a href="//$1">$&</a>');
+
+  // Put emails back in
+  newText = newText.replace(TEMP_CHAR_REGEX, getEmail);
+
+  if (newText !== oldText) {
+    // If we successfully added any links
+    console.log(newText);
+    if (onBeforeReplace !== undefined) {
+      onBeforeReplace();
+    }
+    $(node).replaceWith(newText);
+  } else if (onSkipped !== undefined) {
+    onSkipped();
+  }
+}
 
 // Filter for the TreeWalker to determine which nodes to return
 function excludeNodes(node) {
@@ -104,17 +137,12 @@ function excludeNodes(node) {
   return NodeFilter.FILTER_ACCEPT;
 }
 
+setTimeout(function() {
+  convertLinks(document.body);
 
-// Helper functions for email replacement
-var emails = [];
-var i = 0;
-function stashEmail(email) {
-  emails.push('<a href="mailto:' + email + '">' + email + '</a>');
-  return TEMP_CHAR;
-}
-
-function getEmail() {
-  return emails[i++];
-}
-
-setTimeout(convertLinks, 1500);
+  observer.observe(document.body, {
+    characterData: true,
+    childList: true,
+    subtree: true
+  });
+}, 1500);
