@@ -10,7 +10,8 @@
       "128": "icons/icon128.png"
    },
    "permissions": [
-      "<all_urls>"
+      "<all_urls>",
+      "storage"
    ],
    "content_scripts": [{
       "exclude_matches": ["*://*.facebook.com/*", "*://*.twitter.com/*", "*://*.tumblr.com/*"],
@@ -21,5 +22,9 @@
       ],
       "matches": ["<all_urls>"],
       "run_at": "document_idle"
-   }]
+   }],
+   "options_ui": {
+      "page": "options/options.html",
+      "chrome_style": true
+   }
 }

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>LinkBot Options</title>
+    <script src="options.js" defer></script>
+    <script src="jquery-3.1.0.min.js"></script>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <form id="form">
+      <div>
+        <label><input id="link_on_load" type="checkbox">Find links on page load</label>
+      </div>
+      <div>
+        <label><input id="link_on_change" type="checkbox">Find links when the page changes</label>
+      </div>
+    </form>
+    <div id="footer">
+      <span id="status"></span>
+      <button id="reset">Reset to defaults</button>
+    </div>
+  </body>
+</html>
