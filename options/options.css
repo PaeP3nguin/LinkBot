@@ -3,6 +3,10 @@ body {
     padding: 10px;
 }
 
+input {
+    margin-right: 10px !important;
+}
+
 #footer {
     display: flex;
     overflow: auto;
