@@ -1,0 +1,17 @@
+body {
+    font-family: Raleway, Helvetica, Ubuntu, Arial, sans-serif;
+    width: 300px;
+    height: 100%;
+    padding: 15px;
+}
+
+#title {
+    display: table;
+}
+
+#title h1 {
+    font-weight: normal;
+    display: table-cell;
+    padding-left: 20px;
+    vertical-align: middle;
+}

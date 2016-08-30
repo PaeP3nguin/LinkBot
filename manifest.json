@@ -4,10 +4,10 @@
    "manifest_version": 2,
    "description": "Convert URLs in text to proper, clickable hyperlinks",
    "icons": {
-      "16": "promo/icons/icon16.png",
-      "32": "promo/icons/icon19.png",
-      "48": "promo/icons/icon48.png",
-      "128": "promo/icons/icon128.png"
+      "16": "promo/linkbot-round-16.png",
+      "32": "promo/linkbot-round-32.png",
+      "48": "promo/linkbot-round-48.png",
+      "128": "promo/linkbot-round-128.png"
    },
    "permissions": [
       "<all_urls>",
@@ -15,7 +15,11 @@
    ],
    "browser_action": {
       "default_title": "LinkBot",
-      "default_popup": "page_action.html"
+      "default_popup": "browser_action/browser_action.html",
+      "default_icon": {
+         "19": "promo/linkbot-round-19.png",
+         "38": "promo/linkbot-round-38.png"
+      }
    },
    "content_scripts": [{
       "exclude_matches": ["*://*.facebook.com/*", "*://*.twitter.com/*", "*://*.tumblr.com/*"],
