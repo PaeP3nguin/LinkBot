@@ -13,6 +13,10 @@
       "<all_urls>",
       "storage"
    ],
+   "browser_action": {
+      "default_title": "LinkBot",
+      "default_popup": "page_action.html"
+   },
    "content_scripts": [{
       "exclude_matches": ["*://*.facebook.com/*", "*://*.twitter.com/*", "*://*.tumblr.com/*"],
       "js": [
