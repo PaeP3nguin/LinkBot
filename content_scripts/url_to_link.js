@@ -92,7 +92,6 @@ chrome.runtime.onMessage.addListener(
     if (request.link === 'all') {
       var linksFound = recursiveLink(document.body);
       sendResponse({
-        'success': true,
         'linksFound': linksFound
       });
     }
