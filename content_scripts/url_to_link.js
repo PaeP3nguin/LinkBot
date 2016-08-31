@@ -46,12 +46,24 @@ chrome.storage.sync.get({
       childList: true
     };
 
+    // Watch for DOM changes
     var observer = new MutationObserver(function(mutations) {
       observer.disconnect();
       mutations.forEach(function(m) {
         if (m.type === "characterData") {
-          // console.log(m);
+          // Actual text node itself changed
+          var textNode = m.target;
+          var parent = textNode.parentNode;
+          if (parent && parent.tagName in EXCLUDED_TAGS) {
+            // If the text is in an excluded tag, ignore
+            // We can't guarantee the text isn't the descendant of an excluded tag
+            // However, given the tags we exclude, it's pretty unlikely
+            return;
+          } else {
+            linkTextNode(textNode, options);
+          }
         } else if (m.type === "childList") {
+          // Added or removed stuff somewhere
           m.addedNodes.forEach(function(node) {
             switch (shouldLink(node)) {
               case NodeFilter.FILTER_ACCEPT:
