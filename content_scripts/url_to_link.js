@@ -29,6 +29,7 @@ var EXCLUDED_TAGS = {
   CODE: true,
 };
 
+// Execution starts here!
 // Get options, then run convert links as needed
 chrome.storage.sync.get({
   linkOnLoad: true,
@@ -48,35 +49,27 @@ chrome.storage.sync.get({
 
     // Watch for DOM changes
     var observer = new MutationObserver(function(mutations) {
+      // Stop watching so we don't see mutations that we're causing
       observer.disconnect();
       mutations.forEach(function(m) {
         if (m.type === "characterData") {
           // Actual text node itself changed
-          var textNode = m.target;
-          var parent = textNode.parentNode;
-          if (parent && parent.tagName in EXCLUDED_TAGS) {
-            // If the text is in an excluded tag, ignore
-            // We can't guarantee the text isn't the descendant of an excluded tag
-            // However, given the tags we exclude, it's pretty unlikely
+          if (areParentsExcluded(m.target)) {
             return;
-          } else {
-            linkTextNode(textNode, options);
           }
+
+          linkTextNode(m.target, options);
         } else if (m.type === "childList") {
           // Added or removed stuff somewhere
           m.addedNodes.forEach(function(node) {
-            switch (shouldLink(node)) {
-              case NodeFilter.FILTER_ACCEPT:
-                // Found a text node, find links
-                linkTextNode(node, options);
-                break;
-              case NodeFilter.FILTER_SKIP:
-                // Found a non-text node, look for nodes
-                recursiveLink(node, options);
-                break;
-              case NodeFilter.FILTER_REJECT:
-                // Node doesn't meet our citeria, do nothing
-                break;
+            if (areParentsExcluded(node)) {
+              return;
+            }
+
+            if (node.nodeType === Node.TEXT_NODE) {
+              linkTextNode(node, options);
+            } else {
+              recursiveLink(node, options);
             }
           });
         }
@@ -88,11 +81,25 @@ chrome.storage.sync.get({
   }
 });
 
-// Function to convert all links
+// Function to test if any of the parents of a node are in EXCLUDED_TAGS
+function areParentsExcluded(node) {
+  var parent = node.parentNode;
+  while (parent !== null) {
+    if (parent.tagName in EXCLUDED_TAGS) {
+      return true;
+    } else {
+      parent = parent.parentNode;
+    }
+  }
+
+  return false;
+}
+
+// Function to convert all links under a root node
 function recursiveLink(root, options) {
   // Initialize a TreeWalker to start looking at text from the root node
   var walker = document.createTreeWalker(root, NodeFilter.SHOW_ALL, {
-    acceptNode: shouldLink
+    acceptNode: nodeFilter
   }, false);
 
   var node = walker.nextNode();
@@ -107,7 +114,7 @@ function recursiveLink(root, options) {
 }
 
 // Filter for TreeWalker to determine which nodes to return
-function shouldLink(node) {
+function nodeFilter(node) {
   // Skip node and all children of any excluded tags
   if (node.tagName in EXCLUDED_TAGS) {
     return NodeFilter.FILTER_REJECT;
