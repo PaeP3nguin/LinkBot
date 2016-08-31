@@ -1,7 +1,7 @@
 body {
     font-family: Helvetica, Arial, sans-serif;
-    height: 100%;
     width: 300px;
+    height: 100%;
     padding: 15px;
 }
 
@@ -50,4 +50,9 @@ body {
 .btn-blue:active {
     top: 6px;
     box-shadow: 0 0 #027bce;
+}
+
+#code-link {
+    font-size: 12px;
+    margin: 12px 0 0 0;
 }
