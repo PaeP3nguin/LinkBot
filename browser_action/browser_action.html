@@ -2,8 +2,8 @@
 <html>
   <head>
     <title>LinkBot</title>
-    <script src="browser_action.js" defer></script>
     <script src="/lib/jquery-3.1.0.min.js"></script>
+    <script src="browser_action.js"></script>
     <link rel="stylesheet" href="browser_action.css" />
   </head>
   <body>
@@ -11,20 +11,11 @@
       <img src="/promo/linkbot-64.png">
       <h1>LinkBot</h1>
     </div>
-    <form id="form">
-      <div>
-        <label><input id="link_on_load" type="checkbox">Automatically find links</label>
-      </div>
-      <div>
-        <label><input id="link_on_change" type="checkbox">Find links when the page changes</label>
-      </div>
-      <div>
-        <label><input id="link_emails" type="checkbox">Convert emails to links</label>
-      </div>
-    </form>
-    <div id="footer">
-      <span id="status"></span>
-      <button id="reset">Reset to defaults</button>
-    </div>
+
+    <button id="re-link" class="btn-blue">
+      <img class="btn-icon" src="/promo/hyperlink-white-24.png"/>
+      <span class="btn-text">Find links</span>
+    </button>
+    <span id="status-text"></span>
   </body>
 </html>

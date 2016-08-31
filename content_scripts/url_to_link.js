@@ -29,6 +29,8 @@ var EXCLUDED_TAGS = {
   CODE: true,
 };
 
+var userOptions;
+
 // Execution starts here!
 // Get options, then run convert links as needed
 chrome.storage.sync.get({
@@ -36,12 +38,14 @@ chrome.storage.sync.get({
   linkOnChange: true,
   linkEmails: true
 }, function(options) {
+  userOptions = options;
+
   if (options.linkOnLoad) {
-    recursiveLink(document.body, options);
+    recursiveLink(document.body);
   }
 
-  if (options.linkOnChange) {
-    var observeOptions = {
+  if (userOptions.linkOnChange) {
+    var observerOptions = {
       subtree: true,
       characterData: true,
       childList: true
@@ -58,7 +62,7 @@ chrome.storage.sync.get({
             return;
           }
 
-          linkTextNode(m.target, options);
+          linkTextNode(m.target);
         } else if (m.type === "childList") {
           // Added or removed stuff somewhere
           m.addedNodes.forEach(function(node) {
@@ -67,19 +71,32 @@ chrome.storage.sync.get({
             }
 
             if (node.nodeType === Node.TEXT_NODE) {
-              linkTextNode(node, options);
+              linkTextNode(node);
             } else {
-              recursiveLink(node, options);
+              recursiveLink(node);
             }
           });
         }
       });
-      observer.observe(document.body, observeOptions);
+      // Start watching again
+      observer.observe(document.body, observerOptions);
     });
 
-    observer.observe(document.body, observeOptions);
+    observer.observe(document.body, observerOptions);
   }
 });
+
+// Listen to messages from the browser action
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    if (request.link === 'all') {
+      var linksFound = recursiveLink(document.body);
+      sendResponse({
+        'success': true,
+        'linksFound': linksFound
+      });
+    }
+  });
 
 // Function to test if any of the parents of a node are in EXCLUDED_TAGS
 function areParentsExcluded(node) {
@@ -96,7 +113,10 @@ function areParentsExcluded(node) {
 }
 
 // Function to convert all links under a root node
-function recursiveLink(root, options) {
+// Returns an approximate lower bound of links found
+function recursiveLink(root) {
+  var linksFound = 0;
+
   // Initialize a TreeWalker to start looking at text from the root node
   var walker = document.createTreeWalker(root, NodeFilter.SHOW_ALL, {
     acceptNode: nodeFilter
@@ -109,7 +129,13 @@ function recursiveLink(root, options) {
   }
 
   while (node !== null) {
-    linkTextNode(node, options, nextNode, nextNode);
+    if (!linkTextNode(node, nextNode)) {
+      // No links found
+      nextNode();
+    } else {
+      // Links found
+      linksFound++;
+    }
   }
 }
 
@@ -134,7 +160,8 @@ function nodeFilter(node) {
   return NodeFilter.FILTER_ACCEPT;
 }
 
-function linkTextNode(node, options, onBeforeReplace, onSkipped) {
+// Find links in a text node. Returns true if links are found
+function linkTextNode(node, onBeforeReplace) {
   // Email saving variables and functions
   var emails = [];
   var i = 0;
@@ -152,7 +179,7 @@ function linkTextNode(node, options, onBeforeReplace, onSkipped) {
   var oldText = node.data;
   var newText = oldText;
 
-  if (options.linkEmails) {
+  if (userOptions.linkEmails) {
     // Save emails and replace with a temporary, noncharacter Unicode character
     // We'll put the emails back in later
     // Why? Because otherwise the part after the @ sign will be recognized and replaced as a URL!
@@ -162,7 +189,7 @@ function linkTextNode(node, options, onBeforeReplace, onSkipped) {
   // Replace URLs with links
   newText = newText.replace(URL_REGEX, '<a href="//$1">$&</a>');
 
-  if (options.linkEmails) {
+  if (userOptions.linkEmails) {
     // Put emails back in
     newText = newText.replace(TEMP_CHAR_REGEX, getEmail);
   }
@@ -174,7 +201,8 @@ function linkTextNode(node, options, onBeforeReplace, onSkipped) {
       onBeforeReplace();
     }
     $(node).replaceWith(newText);
-  } else if (onSkipped !== undefined) {
-    onSkipped();
+    return true;
   }
+
+  return false;
 }

@@ -1,6 +1,5 @@
 body {
-    font-family: Raleway, Helvetica, Ubuntu, Arial, sans-serif;
-    width: 300px;
+    font-family: Helvetica, Arial, sans-serif;
     height: 100%;
     padding: 15px;
 }
@@ -14,4 +13,46 @@ body {
     display: table-cell;
     padding-left: 20px;
     vertical-align: middle;
+}
+
+.btn-icon, .btn-text {
+    vertical-align: middle;
+}
+
+.btn-text {
+    margin-left: 8px;
+}
+
+.btn-blue {
+    width: 100%;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    padding: 12px 10px;
+    margin-top: 12px;
+    font-weight: 700;
+    outline: none;
+    position: relative;
+
+    background: #0496FF;
+    color: white;
+    box-shadow: 0 6px #027BCE;
+    border-radius: 3px;
+}
+
+.btn-blue:hover {
+    box-shadow: 0 8px #027BCE;
+    top: -2px;
+}
+
+.btn-blue:active {
+    box-shadow: 0 0 #027BCE;
+    top: 6px;
+}
+
+#status-text {
+    margin-top: 16px;
+    font-size: 15px;
+    color: green;
+    display: block;
 }
