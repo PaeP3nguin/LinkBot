@@ -36,7 +36,7 @@ chrome.storage.sync.get({
   linkEmails: true
 }, function(options) {
   if (options.linkOnLoad) {
-    convertLinks(document.body, options);
+    recursiveLink(document.body, options);
   }
 
   if (options.linkOnChange) {
@@ -53,10 +53,18 @@ chrome.storage.sync.get({
           // console.log(m);
         } else if (m.type === "childList") {
           m.addedNodes.forEach(function(node) {
-            if (node.nodeType == Node.TEXT_NODE) {
-              linkifyNode(node, options);
-            } else {
-              convertLinks(node, options);
+            switch (shouldLink(node)) {
+              case NodeFilter.FILTER_ACCEPT:
+                // Found a text node, find links
+                linkTextNode(node, options);
+                break;
+              case NodeFilter.FILTER_SKIP:
+                // Found a non-text node, look for nodes
+                recursiveLink(node, options);
+                break;
+              case NodeFilter.FILTER_REJECT:
+                // Node doesn't meet our citeria, do nothing
+                break;
             }
           });
         }
@@ -69,10 +77,10 @@ chrome.storage.sync.get({
 });
 
 // Function to convert all links
-function convertLinks(root, options) {
+function recursiveLink(root, options) {
   // Initialize a TreeWalker to start looking at text from the root node
   var walker = document.createTreeWalker(root, NodeFilter.SHOW_ALL, {
-    acceptNode: excludeNodes
+    acceptNode: shouldLink
   }, false);
 
   var node = walker.nextNode();
@@ -82,12 +90,12 @@ function convertLinks(root, options) {
   }
 
   while (node !== null) {
-    linkifyNode(node, options, nextNode, nextNode);
+    linkTextNode(node, options, nextNode, nextNode);
   }
 }
 
-// Filter for the TreeWalker to determine which nodes to return
-function excludeNodes(node) {
+// Filter for TreeWalker to determine which nodes to return
+function shouldLink(node) {
   // Skip node and all children of any excluded tags
   if (node.tagName in EXCLUDED_TAGS) {
     return NodeFilter.FILTER_REJECT;
@@ -101,13 +109,13 @@ function excludeNodes(node) {
   // Skip node if the text is too short to be a link
   var text = node.data.trim();
   if (text.length <= MIN_LINK_SIZE) {
-    return NodeFilter.FILTER_SKIP;
+    return NodeFilter.FILTER_REJECT;
   }
 
   return NodeFilter.FILTER_ACCEPT;
 }
 
-function linkifyNode(node, options, onBeforeReplace, onSkipped) {
+function linkTextNode(node, options, onBeforeReplace, onSkipped) {
   // Email saving variables and functions
   var emails = [];
   var i = 0;
