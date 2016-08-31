@@ -2,9 +2,11 @@ $(function() {
     var statusText = $('#status-text');
     var reLink = $('#re-link');
     var options = $('#options');
+    var help = $('#help');
 
     reLink.click(linkCurrentPage);
     options.click(openOptions);
+    help.click(openHelp);
 
     // Send a message to the content script telling it to find links in the page again
     function linkCurrentPage() {
@@ -45,7 +47,7 @@ $(function() {
             });
         }, 2000);
     }
-    
+
     function openOptions() {
         if (chrome.runtime.openOptionsPage) {
             // New way to open options pages, if supported (Chrome 42+).
@@ -56,4 +58,8 @@ $(function() {
         }
     }
 
+    function openHelp() {
+        // TODO: replace with actual ID when extension published
+        window.open('https://chrome.google.com/webstore/detail/' +  chrome.runtime.id + '/support');
+    }
 });
