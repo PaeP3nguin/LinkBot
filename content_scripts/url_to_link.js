@@ -136,6 +136,8 @@ function recursiveLink(root) {
       linksFound++;
     }
   }
+
+  return linksFound;
 }
 
 // Filter for TreeWalker to determine which nodes to return
