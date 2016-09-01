@@ -2,7 +2,7 @@
    "name": "LinkBot",
    "version": "1.0",
    "manifest_version": 2,
-   "description": "Convert URLs in text to proper, clickable hyperlinks",
+   "description": "Makes links and emails in text clickable",
    "icons": {
       "16": "promo/linkbot-round-16.png",
       "32": "promo/linkbot-round-32.png",
