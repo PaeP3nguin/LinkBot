@@ -2,9 +2,6 @@
 var TEMP_CHAR = '\uFFFF';
 var TEMP_CHAR_REGEX = /\uFFFF/gi;
 
-// Smallest possible link is something like m.co
-var MIN_LINK_SIZE = 4;
-
 // A collection of tags to not replace text inside of
 var EXCLUDED_TAGS = {
   // Already clickable
@@ -40,7 +37,7 @@ chrome.storage.sync.get({
 }, function(options) {
   userOptions = options;
 
-  if (options.linkOnLoad) {
+  if (userOptions.linkOnLoad) {
     recursiveLink(document.body);
   }
 
@@ -51,6 +48,14 @@ chrome.storage.sync.get({
       childList: true
     };
 
+    // Delay observer starts to allow webpage js to run and prevent infinite loops
+    var startWatching = function() {
+      setTimeout(function() {
+        // Start watching again
+        observer.observe(document.body, observerOptions);
+      }, 10);
+    };
+
     // Watch for DOM changes
     var observer = new MutationObserver(function(mutations) {
       // Stop watching so we don't see mutations that we're causing
@@ -58,31 +63,16 @@ chrome.storage.sync.get({
       mutations.forEach(function(m) {
         if (m.type === "characterData") {
           // Actual text node itself changed
-          if (areParentsExcluded(m.target)) {
-            return;
-          }
-
-          linkTextNode(m.target);
+          linkSingleNode(m.target);
         } else if (m.type === "childList") {
           // Added or removed stuff somewhere
-          m.addedNodes.forEach(function(node) {
-            if (areParentsExcluded(node)) {
-              return;
-            }
-
-            if (node.nodeType === Node.TEXT_NODE) {
-              linkTextNode(node);
-            } else {
-              recursiveLink(node);
-            }
-          });
+          m.addedNodes.forEach(linkSingleNode);
         }
       });
-      // Start watching again
-      observer.observe(document.body, observerOptions);
+      startWatching();
     });
 
-    observer.observe(document.body, observerOptions);
+    startWatching();
   }
 });
 
@@ -96,6 +86,19 @@ chrome.runtime.onMessage.addListener(
       });
     }
   });
+
+// Link a single node, checking if any of its parents are excluded
+function linkSingleNode(node) {
+  if (areParentsExcluded(node)) {
+    return;
+  }
+
+  if (node.nodeType === Node.TEXT_NODE) {
+    linkTextNode(node);
+  } else {
+    recursiveLink(node);
+  }
+}
 
 // Function to test if any of the parents of a node are in EXCLUDED_TAGS
 function areParentsExcluded(node) {
@@ -121,17 +124,14 @@ function recursiveLink(root) {
     acceptNode: nodeFilter
   }, false);
 
+  var prev;
   var node = walker.nextNode();
-
-  function nextNode() {
-    node = walker.nextNode();
-  }
-
   while (node !== null) {
-    if (!linkTextNode(node, nextNode)) {
-      // No links found
-      nextNode();
-    } else {
+    // Advance the walker past the current node to prevent
+    // seeing the same text nodes twice due to our own DOM changes
+    prev = node;
+    node = walker.nextNode();
+    if (linkTextNode(prev)) {
       // Links found
       linksFound++;
     }
@@ -142,39 +142,30 @@ function recursiveLink(root) {
 
 // Filter for TreeWalker to determine which nodes to return
 function nodeFilter(node) {
-  // Skip node and all children of any excluded tags
+  // Skip node and all descendants of any excluded tags
   if (node.tagName in EXCLUDED_TAGS) {
     return NodeFilter.FILTER_REJECT;
   }
 
   // Skip nodes that aren't text
-  if (node.nodeType != Node.TEXT_NODE) {
+  if (node.nodeType !== Node.TEXT_NODE) {
     return NodeFilter.FILTER_SKIP;
   }
 
-  // Skip node if the text is too short to be a link
-  var text = node.data.trim();
-  if (text.length <= MIN_LINK_SIZE) {
-    return NodeFilter.FILTER_REJECT;
+  // Skip if text is too short to be a link
+  // Shortest possible link is something like g.co
+  if (node.data.trim().length <= 4) {
+    return NodeFilter.FILTER_SKIP;
   }
 
   return NodeFilter.FILTER_ACCEPT;
 }
 
-// Find links in a text node. Returns true if links are found
-function linkTextNode(node, onBeforeReplace) {
+// Find links in a text node. Returns true if any links are found
+function linkTextNode(node) {
   // Email saving variables and functions
   var emails = [];
   var i = 0;
-
-  function stashEmail(email) {
-    emails.push('<a href="mailto:' + email + '">' + email + '</a>');
-    return TEMP_CHAR;
-  }
-
-  function getEmail() {
-    return emails[i++];
-  }
 
   // Save the text to compare with later
   var oldText = node.data;
@@ -184,26 +175,26 @@ function linkTextNode(node, onBeforeReplace) {
     // Save emails and replace with a temporary, noncharacter Unicode character
     // We'll put the emails back in later
     // Why? Because otherwise the part after the @ sign will be recognized and replaced as a URL!
-    newText = newText.replace(EMAIL_REGEX, stashEmail);
+    newText = newText.replace(EMAIL_REGEX, function() {
+      emails.push('<a href="mailto:' + email + '">' + email + '</a>');
+      return TEMP_CHAR;
+    });
   }
 
   // Replace URLs with links
   newText = newText.replace(URL_REGEX, '<a href="//$1">$&</a>');
 
-  if (userOptions.linkEmails) {
-    // Put emails back in
-    newText = newText.replace(TEMP_CHAR_REGEX, getEmail);
+  if (emails.length) {
+    // Put emails back in, if any
+    newText = newText.replace(TEMP_CHAR_REGEX, function() {
+      return emails[i++];
+    });
   }
 
   if (newText !== oldText) {
-    // If we successfully added any links
-    console.log(newText);
-    if (onBeforeReplace !== undefined) {
-      onBeforeReplace();
-    }
+    // If we successfully added any links, insert into DOM
     $(node).replaceWith(newText);
-    return true;
   }
 
-  return false;
+  return newText !== oldText;
 }
