@@ -104,7 +104,7 @@ function linkSingleNode(node) {
 function areParentsExcluded(node) {
   var parent = node.parentNode;
   while (parent !== null) {
-    if (parent.tagName in EXCLUDED_TAGS) {
+    if (EXCLUDED_TAGS.hasOwnProperty(parent.tagName)) {
       return true;
     } else {
       parent = parent.parentNode;
@@ -143,7 +143,7 @@ function recursiveLink(root) {
 // Filter for TreeWalker to determine which nodes to return
 function nodeFilter(node) {
   // Skip node and all descendants of any excluded tags
-  if (node.tagName in EXCLUDED_TAGS) {
+  if (EXCLUDED_TAGS.hasOwnProperty(node.tagName)) {
     return NodeFilter.FILTER_REJECT;
   }
 
