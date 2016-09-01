@@ -76,7 +76,7 @@ var URL_REGEX = /\b(?:(?:https?|ftp):\/\/)?((?:(?:[01]?\d?\d|2[0-4]\d|25[0-5])(?
   //Start after word boundary
   \b
     // Everything before the @ sign
-    (?:[a-z\u00a1-\uffff\d!#$%&'*+/=?^_`{|}~-])+(?:\.[a-z\u00a1-\uffff\d!#$%&'*+/=?^_`{|}~-]+)*
+    [\w\u00a1-\uffff!#$%&'*+/=?^`{|}~-]+(?:\.[\w\u00a1-\uffff!#$%&'*+/=?^`{|}~-]+)*
       @
     (?:
         // IP address
@@ -94,4 +94,4 @@ var URL_REGEX = /\b(?:(?:https?|ftp):\/\/)?((?:(?:[01]?\d?\d|2[0-4]\d|25[0-5])(?
     [a-z\u00a1-\uffff\d]?
   \b
 */
-var EMAIL_REGEX = /\b(?:[a-z\u00a1-\uffff\d!#$%&'*+/=?^_`{|}~-])+(?:\.[a-z\u00a1-\uffff\d!#$%&'*+/=?^_`{|}~-]+)*@(?:(?:[01]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[01]?\d?\d|2[0-4]\d|25[0-5])){3}|(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+(?:\.(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))[a-z\u00a1-\uffff\d]?\b/gi;
+var EMAIL_REGEX = /\b[\w\u00a1-\uffff!#$%&'*+/=?^`{|}~-]+(?:\.[\w\u00a1-\uffff!#$%&'*+/=?^`{|}~-]+)*@(?:(?:[01]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[01]?\d?\d|2[0-4]\d|25[0-5])){3}|(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+(?:\.(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))[a-z\u00a1-\uffff\d]?\b/gi;
