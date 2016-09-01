@@ -33,7 +33,7 @@ $(function() {
     }, function(options) {
       linkOnLoad.prop('checked', options.linkOnLoad);
       linkOnChange.prop('checked', options.linkOnChange);
-      linkEmails.prop('checked', options.linkOnChange);
+      linkEmails.prop('checked', options.linkEmails);
     });
   }
 
@@ -47,7 +47,7 @@ $(function() {
     }, function() {
       linkOnLoad.prop('checked', true);
       linkOnChange.prop('checked', true);
-      linkEmails.prop('checked', options.linkEmails);
+      linkEmails.prop('checked', true);
       statusText.fadeIn();
     });
   }
