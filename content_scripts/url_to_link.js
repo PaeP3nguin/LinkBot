@@ -184,7 +184,7 @@ function linkTextNode(node) {
     // Save emails and replace with a temporary, noncharacter Unicode character
     // We'll put the emails back in later
     // Why? Because otherwise the part after the @ sign will be recognized and replaced as a URL!
-    newText = newText.replace(EMAIL_REGEX, function() {
+    newText = newText.replace(EMAIL_REGEX, function(email) {
       emails.push('<a href="mailto:' + email + '">' + email + '</a>');
       return TEMP_CHAR;
     });
