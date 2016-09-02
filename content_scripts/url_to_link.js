@@ -142,23 +142,32 @@ function recursiveLink(root) {
 
 // Filter for TreeWalker to determine which nodes to return
 function nodeFilter(node) {
-  // Skip node and all descendants of any excluded tags
-  if (EXCLUDED_TAGS.hasOwnProperty(node.tagName)) {
-    return NodeFilter.FILTER_REJECT;
-  }
+  switch (node.nodeType) {
+    case Node.TEXT_NODE:
+      // Skip if text is too short to be a link
+      // Shortest possible link is something like g.co
+      if (node.data.trim().length <= 4) {
+        return NodeFilter.FILTER_SKIP;
+      }
 
-  // Skip nodes that aren't text
-  if (node.nodeType !== Node.TEXT_NODE) {
-    return NodeFilter.FILTER_SKIP;
-  }
+      return NodeFilter.FILTER_ACCEPT;
+    case Node.ELEMENT_NODE:
+      // Skip node and all descendants of an editable node
+      if (node.isContentEditable) {
+        return NodeFilter.FILTER_REJECT;
+      }
 
-  // Skip if text is too short to be a link
-  // Shortest possible link is something like g.co
-  if (node.data.trim().length <= 4) {
-    return NodeFilter.FILTER_SKIP;
-  }
+      // Skip node and all descendants of any excluded tags
+      if (EXCLUDED_TAGS.hasOwnProperty(node.tagName)) {
+        return NodeFilter.FILTER_REJECT;
+      }
 
-  return NodeFilter.FILTER_ACCEPT;
+      // Pass by boring old non-text nodes
+      return NodeFilter.FILTER_SKIP;
+    default:
+      // What are you????
+      return NodeFilter.FILTER_SKIP;
+  }
 }
 
 // Find links in a text node. Returns true if any links are found
