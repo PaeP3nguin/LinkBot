@@ -26,51 +26,44 @@ var EXCLUDED_TAGS = {
   CODE: true,
 };
 
-var userOptions;
-
 // Execution starts here!
-// Get options, then run convert links as needed
-chrome.storage.sync.get(DEFAULT_OPTIONS, function(options) {
-  userOptions = options;
+if (OPTIONS.linkOnLoad) {
+  recursiveLink(document.body);
+}
 
-  if (userOptions.linkOnLoad) {
-    recursiveLink(document.body);
-  }
+if (OPTIONS.linkOnChange) {
+  var observerOptions = {
+    subtree: true,
+    characterData: true,
+    childList: true
+  };
 
-  if (userOptions.linkOnChange) {
-    var observerOptions = {
-      subtree: true,
-      characterData: true,
-      childList: true
-    };
+  // Delay observer starts to allow webpage js to run and prevent infinite loops
+  var startWatching = function() {
+    setTimeout(function() {
+      // Start watching again
+      observer.observe(document.body, observerOptions);
+    }, 10);
+  };
 
-    // Delay observer starts to allow webpage js to run and prevent infinite loops
-    var startWatching = function() {
-      setTimeout(function() {
-        // Start watching again
-        observer.observe(document.body, observerOptions);
-      }, 10);
-    };
-
-    // Watch for DOM changes
-    var observer = new MutationObserver(function(mutations) {
-      // Stop watching so we don't see mutations that we're causing
-      observer.disconnect();
-      mutations.forEach(function(m) {
-        if (m.type === "characterData") {
-          // Actual text node itself changed
-          linkSingleNode(m.target);
-        } else if (m.type === "childList") {
-          // Added or removed stuff somewhere
-          m.addedNodes.forEach(linkSingleNode);
-        }
-      });
-      startWatching();
+  // Watch for DOM changes
+  var observer = new MutationObserver(function(mutations) {
+    // Stop watching so we don't see mutations that we're causing
+    observer.disconnect();
+    mutations.forEach(function(m) {
+      if (m.type === "characterData") {
+        // Actual text node itself changed
+        linkSingleNode(m.target);
+      } else if (m.type === "childList") {
+        // Added or removed stuff somewhere
+        m.addedNodes.forEach(linkSingleNode);
+      }
     });
-
     startWatching();
-  }
-});
+  });
+
+  startWatching();
+}
 
 // Listen to messages from the browser action
 chrome.runtime.onMessage.addListener(
@@ -176,7 +169,7 @@ function linkTextNode(node) {
   var oldText = node.data;
   var newText = oldText;
 
-  if (userOptions.linkEmails) {
+  if (OPTIONS.linkEmails) {
     // Save emails and replace with a temporary, noncharacter Unicode character
     // We'll put the emails back in later
     // Why? Because otherwise the part after the @ sign will be recognized and replaced as a URL!
