@@ -26,11 +26,7 @@ $(function() {
   }
 
   function getOptions() {
-    chrome.storage.sync.get({
-      linkOnLoad: true,
-      linkOnChange: true,
-      linkEmails: true
-    }, function(options) {
+    chrome.storage.sync.get(DEFAULT_OPTIONS, function(options) {
       linkOnLoad.prop('checked', options.linkOnLoad);
       linkOnChange.prop('checked', options.linkOnChange);
       linkEmails.prop('checked', options.linkEmails);
@@ -40,11 +36,7 @@ $(function() {
   function resetDefaults() {
     statusText.hide();
     statusText.text('Options reset');
-    chrome.storage.sync.set({
-      linkOnLoad: true,
-      linkOnChange: true,
-      linkEmails: true
-    }, function() {
+    chrome.storage.sync.set(DEFAULT_OPTIONS, function() {
       linkOnLoad.prop('checked', true);
       linkOnChange.prop('checked', true);
       linkEmails.prop('checked', true);

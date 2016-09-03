@@ -25,6 +25,7 @@
       "exclude_matches": ["*://*.facebook.com/*", "*://*.twitter.com/*", "*://*.tumblr.com/*"],
       "js": [
          "lib/jquery-3.1.0.slim.min.js",
+         "default_options.js",
          "content_scripts/regex.js",
          "content_scripts/url_to_link.js"
       ],

@@ -30,11 +30,7 @@ var userOptions;
 
 // Execution starts here!
 // Get options, then run convert links as needed
-chrome.storage.sync.get({
-  linkOnLoad: true,
-  linkOnChange: true,
-  linkEmails: true
-}, function(options) {
+chrome.storage.sync.get(DEFAULT_OPTIONS, function(options) {
   userOptions = options;
 
   if (userOptions.linkOnLoad) {
