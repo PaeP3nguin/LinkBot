@@ -38,58 +38,69 @@ if (OPTIONS.linkOnChange) {
     childList: true
   };
 
-  // Delay observer starts to allow webpage js to run and prevent infinite loops
-  var startWatching = function() {
-    setTimeout(function() {
-      // Start watching again
-      observer.observe(document.body, observerOptions);
-    }, 10);
-  };
-
   // Watch for DOM changes
   var observer = new MutationObserver(function(mutations) {
-    // Stop watching so we don't see mutations that we're causing
-    observer.disconnect();
     mutations.forEach(function(m) {
+      if (areParentsExcluded(m.target)) {
+        return;
+      }
+
+      var linkCount = 0;
       if (m.type === "characterData") {
         // Actual text node itself changed
-        linkSingleNode(m.target);
+        linkCount += linkSingleNode(m.target);
       } else if (m.type === "childList") {
         // Added or removed stuff somewhere
-        m.addedNodes.forEach(linkSingleNode);
+        for (var i = 0, l = m.addedNodes.length; i < l; i++) {
+          linkCount += linkSingleNode(m.addedNodes[i]);
+        }
+      }
+
+      if (linkCount > 0) {
+        // Stop and restart watching so we don't see mutations that we're causing
+        // and allow webpage JS to run, which prevents infinite loops
+        observer.disconnect();
+        setTimeout(function() {
+          observer.observe(document.body, observerOptions);
+        }, 0);
       }
     });
-    startWatching();
   });
 
-  startWatching();
+  observer.observe(document.body, observerOptions);
 }
 
 // Listen to messages from the browser action
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     if (request.link === 'all') {
-      var linksFound = recursiveLink(document.body);
       sendResponse({
-        'linksFound': linksFound
+        'linkCount': recursiveLink(document.body)
       });
     }
   });
 
-// Link a single node, checking if any of its parents are excluded
+// Link a single node based on its nodeType, returns number of nodes found
 function linkSingleNode(node) {
-  if (areParentsExcluded(node)) {
-    return;
+  if (node.nodeType === Node.TEXT_NODE) {
+    // Skip if text is too short to be a link
+    // Shortest possible link is something like g.co
+    if (node.data.trim().length <= 4) {
+      return 0;
+    }
+    return linkTextNode(node);
+  } else if (node.nodeType === Node.ELEMENT_NODE) {
+    // Skip node and all descendants of an editable node
+    if (node.isContentEditable) {
+      return 0;
+    }
+    return recursiveLink(node);
   }
 
-  if (node.nodeType === Node.TEXT_NODE) {
-    linkTextNode(node);
-  } else {
-    recursiveLink(node);
-  }
+  return 0;
 }
 
-// Function to test if any of the parents of a node are in EXCLUDED_TAGS
+// Test if any of the parents of a node are in EXCLUDED_TAGS
 function areParentsExcluded(node) {
   var parent = node.parentNode;
   while (parent !== null) {
@@ -103,11 +114,8 @@ function areParentsExcluded(node) {
   return false;
 }
 
-// Function to convert all links under a root node
-// Returns an approximate lower bound of links found
+// Convert all links under a root node, returns number of links found
 function recursiveLink(root) {
-  var linksFound = 0;
-
   // Initialize a TreeWalker to start looking at text from the root node
   var walker = document.createTreeWalker(root, NodeFilter.SHOW_ALL, {
     acceptNode: nodeFilter
@@ -115,21 +123,19 @@ function recursiveLink(root) {
 
   var prev;
   var node = walker.nextNode();
+  var linkCount = 0;
   while (node !== null) {
     // Advance the walker past the current node to prevent
     // seeing the same text nodes twice due to our own DOM changes
     prev = node;
     node = walker.nextNode();
-    if (linkTextNode(prev)) {
-      // Links found
-      linksFound++;
-    }
+    linkCount += linkTextNode(prev);
   }
 
-  return linksFound;
+  return linkCount;
 }
 
-// Filter for TreeWalker to determine which nodes to return
+// Filter for TreeWalker to determine which nodes to examine
 function nodeFilter(node) {
   switch (node.nodeType) {
     case Node.TEXT_NODE:
@@ -159,11 +165,13 @@ function nodeFilter(node) {
   }
 }
 
-// Find links in a text node. Returns true if any links are found
+// Find links in a text node. Returns number of links found
 function linkTextNode(node) {
   // Email saving variables and functions
   var emails = [];
   var i = 0;
+
+  var urlCount = 0;
 
   // Save the text to compare with later
   var oldText = node.data;
@@ -180,7 +188,10 @@ function linkTextNode(node) {
   }
 
   // Replace URLs with links
-  newText = newText.replace(URL_REGEX, '<a href="//$1">$&</a>');
+  newText = newText.replace(URL_REGEX, function(match, part) {
+    urlCount++;
+    return '<a href="//' + part + '">' + match + '</a>';
+  });
 
   if (emails.length) {
     // Put emails back in, if any
@@ -194,5 +205,5 @@ function linkTextNode(node) {
     $(node).replaceWith(newText);
   }
 
-  return newText !== oldText;
+  return i + urlCount;
 }

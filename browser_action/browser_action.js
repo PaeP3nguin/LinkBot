@@ -19,7 +19,7 @@ $(function() {
       }, function(response) {
         if (response) {
           // Looked for links successfully
-          updateStatus(response.linksFound);
+          updateStatus(response.linkCount);
         } else {
           // Didn't get a response, might be on chrome page or page loading
           // Show no links found
@@ -32,8 +32,8 @@ $(function() {
   // Timer handle for the fade-in of original button text
   var statusFade;
 
-  function updateStatus(linksFound) {
-    var linkText = ' ' + (linksFound ? linksFound : 'No') + ' link' + (linksFound === 1 ? '' : 's') + ' found';
+  function updateStatus(linkCount) {
+    var linkText = ' ' + (linkCount ? linkCount : 'No') + ' link' + (linkCount === 1 ? '' : 's') + ' found';
     statusText.fadeOut(200, function() {
       statusText.text(linkText);
       statusText.fadeIn();
