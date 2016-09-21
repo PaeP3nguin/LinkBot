@@ -56,11 +56,11 @@
           // Common
           com?|net|org|edu|gov|cc|in(?:fo)?|io|bi(?:z|d)|mobi|tv|bz|fm|am|me|
           // URL shorteners
-          ly|gl|gdn?|do(?:wnload)?|
+          ly|gl|gdn?|do(?:wnload)?|tw|
           // ccTLDs
-          us|tk|cn|de|uk|ru|nl|eu|br|au|fr|it|pl|jp|ws|ca|ws|es|ch|be|im|pr|gs|nu|ie|mn|xn--[a-z\d-]{4,59}|
+          us|tk|cn|de|uk|ru|nl|eu|br|au|fr|it|pl|jp|ws|ca|ws|es|ch|be|im|pr|gs|nu|ie|mn|rs|vg|lu|xn--[a-z\d-]{4,59}|
           // gTLDs
-          xyz|top?|wang|win|cl(?:ub|ick)|link|vip|online|science|site|racing|date|pw
+          xyz|top?|wang|win|cl(?:ub|ick)|li(?:nk)?|vip|online|science|si(?:te)?|racing|date|pw
         )
     )
     // Port number
@@ -70,7 +70,7 @@
   // Overall URL ends at a word boundary
   \b
 */
-var URL_REGEX = /\b(?:(?:https?|ftp):\/\/)?((?:(?:[01]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[01]?\d?\d|2[0-4]\d|25[0-5])){3}|(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+(?:\.(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+)*\.(?:com?|net|org|edu|gov|cc|in(?:fo)?|io|bi(?:z|d)|mobi|tv|bz|fm|am|me|ly|gl|gdn?|do(?:wnload)?|us|tk|cn|de|uk|ru|nl|eu|br|au|fr|it|pl|jp|ws|ca|ws|es|ch|be|im|pr|gs|nu|ie|mn|xn--[a-z\u00a1-\uffff\d-]{4,59}|xyz|top?|wang|win|cl(?:ub|ick)|link|vip|online|science|site|racing|date|pw))(?::\d{2,5})?(?:[\/?#]\S*[a-z\u00a1-\uffff\d=])?)\b/gi;
+var URL_REGEX = /\b(?:(?:https?|ftp):\/\/)?((?:(?:[01]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[01]?\d?\d|2[0-4]\d|25[0-5])){3}|(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+(?:\.(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+)*\.(?:com?|net|org|edu|gov|cc|in(?:fo)?|io|bi(?:z|d)|mobi|tv|bz|fm|am|me|ly|gl|gdn?|do(?:wnload)?|tw|us|tk|cn|de|uk|ru|nl|eu|br|au|fr|it|pl|jp|ws|ca|ws|es|ch|be|im|pr|gs|nu|ie|mn|rs|vg|lu|xn--[a-z\u00a1-\uffff\d-]{4,59}|xyz|top?|wang|win|cl(?:ub|ick)|li(?:nk)?|vip|online|science|si(?:te)?|racing|date|pw))(?::\d{2,5})?(?:[\/?#]\S*[a-z\u00a1-\uffff\d=])?)\b/gi;
 
 /*
   //Start after word boundary
