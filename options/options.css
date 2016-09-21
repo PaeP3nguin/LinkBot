@@ -1,6 +1,11 @@
 body {
+    width: 500px;
+    min-height: 370px; /* prevents reflowing on tab switch */
     font-size: 14px;
-    padding: 10px;
+}
+
+p {
+    line-height: 1.0em;
 }
 
 input {
@@ -9,16 +14,81 @@ input {
 
 #footer {
     display: flex;
+    align-items: center; /* align vertical */
     overflow: auto;
     width: 100%;
-    margin-top: 16px;
+    margin-top: 14px;
 }
 
-#status {
-    align-self: flex-start;
-    color: green;
+
+/* Navigation bar styles */
+nav {
+    margin-bottom: 20px;
 }
 
-#reset {
-    margin-left: auto;
+nav > ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav li {
+    display: inline-block;
+    box-sizing: border-box;
+    margin-right: 8px;
+    border-bottom: 2px solid lightgray;
+}
+
+nav li:hover {
+    border-bottom: 2px solid #0496ff;
+}
+
+nav li.active {
+    border-bottom: 2px solid #0496ff;
+}
+
+nav a {
+    color: black;
+    text-decoration: none;
+}
+
+
+/* Tab paging styles */
+main > * {
+    display: none;
+}
+
+main > *:last-child, main > *:target {
+    display: block;
+}
+
+main > *:target ~ * {
+    display: none;
+}
+
+
+/* Excluded hosts tab styles */
+#host-list {
+    height: 200px;
+    overflow-y: auto;
+    list-style: none;
+    margin: 0;
+    padding: 4px 8px;
+    border: 2px solid lightgray;
+}
+
+#host-list span {
+    vertical-align: middle;
+}
+
+#close {
+  color: darkslategrey;
+  font-weight: bold;
+  font-size: 20px;
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+#restore-extra-text {
+    margin-left: 10px;
 }

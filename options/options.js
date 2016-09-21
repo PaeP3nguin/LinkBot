@@ -1,46 +1,53 @@
 $(function() {
-  var form = $('#form');
+  var navItems = $('nav li');
 
-  var linkOnLoad = $('#link_on_load');
-  var linkOnChange = $('#link_on_change');
-  var linkEmails = $('#link_emails');
-
-  var statusText = $('#status');
+  var checkBoxes = $(':checkbox');
   var reset = $('#reset');
 
-  getOptions();
+  var hostList = $('#host-list');
 
-  $(':input').change(saveOptions);
-  reset.click(resetDefaults);
+  var OPTIONS;
 
-  function saveOptions() {
-    statusText.hide();
-    statusText.text('Options saved!');
-    chrome.storage.sync.set({
-      linkOnLoad: linkOnLoad.prop('checked'),
-      linkOnChange: linkOnChange.prop('checked'),
-      linkEmails: linkEmails.prop('checked')
-    }, function() {
-      statusText.fadeIn();
+  navItems.click(function(ev) {
+    navItems.removeClass('active');
+    $(ev.currentTarget).addClass('active');
+  });
+
+  chrome.storage.sync.get(DEFAULT_OPTIONS, function(loaded) {
+    OPTIONS = loaded;
+
+    updateCheckboxes();
+    checkBoxes.change(saveCheckboxOption);
+    reset.click(resetCheckboxDefaults);
+
+    populateHosts();
+  });
+
+  function saveCheckboxOption(ev) {
+    var checkBox = ev.target;
+    OPTIONS[checkBox.id] = checkBox.checked;
+    chrome.storage.sync.set(OPTIONS);
+  }
+
+  function resetCheckboxDefaults() {
+    checkBoxes.each(function(i, e) {
+      OPTIONS[e.id] = DEFAULT_OPTIONS[e.id];
+    });
+    chrome.storage.sync.set(OPTIONS, function() {
+      updateCheckboxes();
     });
   }
 
-  function getOptions() {
-    chrome.storage.sync.get(DEFAULT_OPTIONS, function(options) {
-      linkOnLoad.prop('checked', options.linkOnLoad);
-      linkOnChange.prop('checked', options.linkOnChange);
-      linkEmails.prop('checked', options.linkEmails);
+  function updateCheckboxes() {
+    checkBoxes.each(function(i, e) {
+      e.checked = OPTIONS[e.id];
     });
   }
 
-  function resetDefaults() {
-    statusText.hide();
-    statusText.text('Options reset');
-    chrome.storage.sync.set(DEFAULT_OPTIONS, function() {
-      linkOnLoad.prop('checked', true);
-      linkOnChange.prop('checked', true);
-      linkEmails.prop('checked', true);
-      statusText.fadeIn();
+  function populateHosts() {
+    $.each(OPTIONS.excludedHostnames, function(host) {
+      var item = $('<li><span id="close">✖</span><span>' + host + '</span></li>');
+      hostList.append(item);
     });
   }
 });

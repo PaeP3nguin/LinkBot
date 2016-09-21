@@ -8,20 +8,49 @@
     <link rel="stylesheet" href="options.css" />
   </head>
   <body>
-    <form id="form">
-      <div>
-        <label><input id="link_on_load" type="checkbox">Automatically find links</label>
+    <nav>
+      <ul>
+        <a href="#options"><li class="active">Options</li></a>
+        <a href="#excluded"><li>Excluded sites</li></a>
+        <a href="#about"><li>About LinkBot</li></a>
+      </ul>
+    </nav>
+
+    <main>
+      <div id="about">
+        <p>LinkBot will always be free and ad-free.</p>
+        <p>LinkBot will never store or sell your browsing history.</p>
+        <p>If you have any questions, comments, or suggestions, send them <a href="https://chrome.google.com/webstore/detail/lmlpchjimlilbgnbjgbbelfgjoagfhof/support">here</a>.</p>
+        <p>LinkBot's code is MIT-licensed and publicly available on <a href="https://github.com/PaeP3nguin/LinkBot">GitHub</a>.</p>
       </div>
-      <div>
-        <label><input id="link_on_change" type="checkbox">Find links when the page changes</label>
+
+      <div id="excluded">
+        <p>Sites LinkBot won't run on.</p>
+        <p>Exclude a site by navigating to it, clicking the LinkBot icon, and clicking "Don't run on this site"</p>
+        <ul id="host-list">
+        </ul>
+        <div id="footer">
+          <button id="restore-hosts">Restore defaults</button>
+          <span id="restore-extra-text">(Only adds defaults, doesn't delete existing)</span>
+        </div>
       </div>
-      <div>
-        <label><input id="link_emails" type="checkbox">Convert emails to links</label>
+
+      <div id="options">
+        <form id="form">
+          <div>
+            <label><input id="linkOnLoad" type="checkbox">Find links when the page loads</label>
+          </div>
+          <div>
+            <label><input id="linkOnChange" type="checkbox">Find links when the page changes</label>
+          </div>
+          <div>
+            <label><input id="linkEmails" type="checkbox">Convert emails to links</label>
+          </div>
+        </form>
+        <div id="footer">
+          <button id="reset">Reset to defaults</button>
+        </div>
       </div>
-    </form>
-    <div id="footer">
-      <span id="status"></span>
-      <button id="reset">Reset to defaults</button>
-    </div>
+    </main>
   </body>
 </html>
