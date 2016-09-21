@@ -7,6 +7,6 @@ var DEFAULT_OPTIONS = {
         "twitter.com": true,
         "www.tumblr.com": true,
         "mail.google.com": true,
-        "google.com": true,
+        "www.google.com": true,
     }
 };
