@@ -24,6 +24,7 @@ var EXCLUDED_TAGS = {
   INPUT: true,
   PRE: true,
   CODE: true,
+  H1: true,
 };
 
 // Execution starts here!
@@ -100,11 +101,11 @@ function linkSingleNode(node) {
   return 0;
 }
 
-// Test if any of the parents of a node are in EXCLUDED_TAGS
+// Test if any of the parents of a node are in EXCLUDED_TAGS or are editable
 function areParentsExcluded(node) {
   var parent = node.parentNode;
   while (parent !== null) {
-    if (EXCLUDED_TAGS.hasOwnProperty(parent.tagName)) {
+    if (EXCLUDED_TAGS.hasOwnProperty(parent.tagName) || parent.isContentEditable) {
       return true;
     } else {
       parent = parent.parentNode;
