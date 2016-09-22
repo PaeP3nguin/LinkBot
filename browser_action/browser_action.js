@@ -124,6 +124,6 @@ $(function() {
 
   function openHelp() {
     // TODO: replace with actual ID when extension published
-    window.open('https://chrome.google.com/webstore/detail/' + chrome.runtime.id + '/support');
+    window.open('https://chrome.google.com/webstore/detail/chnfcfcbnhloogdohcmjogkklghefofm/support');
   }
 });
