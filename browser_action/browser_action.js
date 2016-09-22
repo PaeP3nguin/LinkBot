@@ -31,9 +31,12 @@ $(function() {
 
           toggleExcludeButton.click(toggleExclude);
           toggleExcludeButton.show();
+
+          reLink.click(linkCurrentPage);
+        } else {
+          reLink.hide();
         }
 
-        reLink.click(linkCurrentPage);
         options.click(openOptions);
         help.click(openHelp);
       });
