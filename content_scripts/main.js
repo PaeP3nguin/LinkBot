@@ -22,6 +22,7 @@ var EXCLUDED_TAGS = {
   TITLE: true,
   TEXTAREA: true,
   INPUT: true,
+  FORM: true,
   PRE: true,
   CODE: true,
   H1: true,
