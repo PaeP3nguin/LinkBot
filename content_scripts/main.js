@@ -110,7 +110,7 @@ function linkSingleNode(node) {
     return linkTextNode(node);
   } else if (node.nodeType === Node.ELEMENT_NODE) {
     // Skip node and all descendants of an editable node
-    if (node.isContentEditable) {
+    if (isNodeEditable(node)) {
       return 0;
     }
     return recursiveLink(node);
@@ -123,7 +123,7 @@ function linkSingleNode(node) {
 function areParentsExcluded(node) {
   var parent = node.parentNode;
   while (parent !== null) {
-    if (EXCLUDED_TAGS.hasOwnProperty(parent.tagName) || parent.isContentEditable) {
+    if (EXCLUDED_TAGS.hasOwnProperty(parent.tagName) || isNodeEditable(parent)) {
       return true;
     } else {
       parent = parent.parentNode;
@@ -131,6 +131,11 @@ function areParentsExcluded(node) {
   }
 
   return false;
+}
+
+// Tests whether a node is contentEditable
+function isNodeEditable(node) {
+  return node.isContentEditable || node.contentEditable === "true";
 }
 
 // Convert all links under a root node, returns number of links found
@@ -167,7 +172,7 @@ function nodeFilter(node) {
       return NodeFilter.FILTER_ACCEPT;
     case Node.ELEMENT_NODE:
       // Skip node and all descendants of an editable node
-      if (node.isContentEditable) {
+      if (isNodeEditable(node)) {
         return NodeFilter.FILTER_REJECT;
       }
 
