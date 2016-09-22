@@ -52,7 +52,9 @@ $(function() {
 
   function restoreDefaultHosts() {
     $.extend(OPTIONS.excludedHostnames, DEFAULT_EXCLUDED_HOSTNAMES);
-    populateHosts();
+    chrome.storage.sync.set(OPTIONS, function() {
+      populateHosts();
+    });
   }
 
   function populateHosts() {

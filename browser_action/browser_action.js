@@ -1,12 +1,73 @@
 $(function() {
+  var toggleExcludeButton = $('#toggle-exclude');
+  var excludeIcon = $('#exclude-icon');
+  var excludeText = $('#exclude-text');
   var statusText = $('#status-text');
   var reLink = $('#re-link');
   var options = $('#options');
   var help = $('#help');
 
-  reLink.click(linkCurrentPage);
-  options.click(openOptions);
-  help.click(openHelp);
+  var OPTIONS;
+  var hostname;
+
+  chrome.storage.sync.get(DEFAULT_OPTIONS, function(loaded) {
+    OPTIONS = loaded;
+
+    if (Object.keys(OPTIONS.excludedHostnames).length === 0) {
+      OPTIONS.excludedHostnames = DEFAULT_EXCLUDED_HOSTNAMES;
+    }
+
+    chrome.tabs.query({
+      active: true,
+      currentWindow: true
+    }, function(tabs) {
+      chrome.tabs.sendMessage(tabs[0].id, {
+        action: 'hostname'
+      }, function(response) {
+        if (response) {
+          hostname = response.hostname;
+
+          setToggleExcludeButtonState(OPTIONS.excludedHostnames[hostname] === undefined);
+
+          toggleExcludeButton.click(toggleExclude);
+          toggleExcludeButton.show();
+        }
+
+        reLink.click(linkCurrentPage);
+        options.click(openOptions);
+        help.click(openHelp);
+      });
+    });
+  });
+
+  function toggleExclude() {
+      if (OPTIONS.excludedHostnames.hasOwnProperty(hostname)) {
+        // Currently excluded
+        delete OPTIONS.excludedHostnames[hostname];
+        chrome.storage.sync.set(OPTIONS, function() {
+          setToggleExcludeButtonState(true, true);
+        });
+      } else {
+        // Currently not excluded
+        OPTIONS.excludedHostnames[hostname] = true;
+        chrome.storage.sync.set(OPTIONS, function() {
+          setToggleExcludeButtonState(false, true);
+        });
+      }
+  }
+
+  function setToggleExcludeButtonState(exclude, animate) {
+    if (animate) {
+      excludeIcon.hide();
+      excludeText.hide();
+    }
+    excludeIcon.attr('src', exclude ? '/img/close/close-white-24.png' : '/img/check/check-white-24.png');
+    excludeText.text(exclude ? "Don't run on this site" : "Run on this site");
+    if (animate) {
+      excludeIcon.fadeIn();
+      excludeText.fadeIn();
+    }
+  }
 
   // Send a message to the content script telling it to find links in the page again
   function linkCurrentPage() {
@@ -15,7 +76,7 @@ $(function() {
       currentWindow: true
     }, function(tabs) {
       chrome.tabs.sendMessage(tabs[0].id, {
-        link: 'all'
+        action: 'link'
       }, function(response) {
         if (response) {
           // Looked for links successfully

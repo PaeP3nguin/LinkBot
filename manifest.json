@@ -21,17 +21,14 @@
          "38": "promo/linkbot-round-38.png"
       }
    },
-   "background": {
-      "scripts": ["background.js"],
-      "persistent": false
-   },
    "content_scripts": [{
       "js": [
+          "lib/jquery-3.1.0.slim.min.js",
          "default_options.js",
-         "content_scripts/loader.js"
+         "content_scripts/regex.js",
+         "content_scripts/main.js"
       ],
-      "matches": ["<all_urls>"],
-      "run_at": "document_start"
+      "matches": ["<all_urls>"]
    }],
    "options_ui": {
       "page": "options/options.html",

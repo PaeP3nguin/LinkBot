@@ -3,27 +3,33 @@
   <head>
     <title>LinkBot</title>
     <script src="/lib/jquery-3.1.0.min.js"></script>
+    <script src="/default_options.js"></script>
     <script src="browser_action.js"></script>
     <link rel="stylesheet" href="browser_action.css" />
   </head>
   <body>
     <div id="title">
       <img src="/promo/linkbot-64.png">
-      <h1>LinkBot says "Hi!"</h1>
+      <h1>LinkBot</h1>
     </div>
 
+    <button id="toggle-exclude" class="btn-blue">
+      <img id="exclude-icon" class="btn-icon" src=""/>
+      <span id="exclude-text" class="btn-text"></span>
+    </button>
+
     <button id="re-link" class="btn-blue">
-      <img class="btn-icon" src="/promo/hyperlink/hyperlink-white-24.png"/>
+      <img class="btn-icon" src="/img/hyperlink/hyperlink-white-24.png"/>
       <span class="btn-text" id="status-text">Find links</span>
     </button>
 
     <button id="options" class="btn-blue">
-      <img class="btn-icon" src="/promo/options/options-white-24.png"/>
+      <img class="btn-icon" src="/img/options/options-white-24.png"/>
       <span class="btn-text">Options</span>
     </button>
 
     <button id="help" class="btn-blue">
-      <img class="btn-icon" src="/promo/help/help-white-24.png"/>
+      <img class="btn-icon" src="/img/help/help-white-24.png"/>
       <span class="btn-text">Help!</span>
     </button>
 

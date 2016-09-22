@@ -27,56 +27,74 @@ var EXCLUDED_TAGS = {
   H1: true,
 };
 
-// Execution starts here!
-if (OPTIONS.linkOnLoad) {
-  recursiveLink(document.body);
-}
+var OPTIONS;
 
-if (OPTIONS.linkOnChange) {
-  var observerOptions = {
-    subtree: true,
-    characterData: true,
-    childList: true
-  };
+chrome.storage.sync.get(DEFAULT_OPTIONS, function(loaded) {
+  OPTIONS = loaded;
 
-  // Watch for DOM changes
-  var observer = new MutationObserver(function(mutations) {
-    mutations.forEach(function(m) {
-      if (areParentsExcluded(m.target)) {
-        return;
-      }
+  if (Object.keys(OPTIONS.excludedHostnames).length === 0) {
+    OPTIONS.excludedHostnames = DEFAULT_EXCLUDED_HOSTNAMES;
+  }
 
-      var linkCount = 0;
-      if (m.type === "characterData") {
-        // Actual text node itself changed
-        linkCount += linkSingleNode(m.target);
-      } else if (m.type === "childList") {
-        // Added or removed stuff somewhere
-        for (var i = 0, l = m.addedNodes.length; i < l; i++) {
-          linkCount += linkSingleNode(m.addedNodes[i]);
+  // Site is excluded, don't run automatically
+  if (OPTIONS.excludedHostnames.hasOwnProperty(window.location.hostname)) {
+    return;
+  }
+
+  if (OPTIONS.linkOnLoad) {
+    recursiveLink(document.body);
+  }
+
+  if (OPTIONS.linkOnChange) {
+    var observerOptions = {
+      subtree: true,
+      characterData: true,
+      childList: true
+    };
+
+    // Watch for DOM changes
+    var observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(m) {
+        if (areParentsExcluded(m.target)) {
+          return;
         }
-      }
 
-      if (linkCount > 0) {
-        // Stop and restart watching so we don't see mutations that we're causing
-        // and allow webpage JS to run, which prevents infinite loops
-        observer.disconnect();
-        setTimeout(function() {
-          observer.observe(document.body, observerOptions);
-        }, 0);
-      }
+        var linkCount = 0;
+        if (m.type === "characterData") {
+          // Actual text node itself changed
+          linkCount += linkSingleNode(m.target);
+        } else if (m.type === "childList") {
+          // Added or removed stuff somewhere
+          for (var i = 0, l = m.addedNodes.length; i < l; i++) {
+            linkCount += linkSingleNode(m.addedNodes[i]);
+          }
+        }
+
+        if (linkCount > 0) {
+          // Stop and restart watching so we don't see mutations that we're causing
+          // and allow webpage JS to run, which prevents infinite loops
+          observer.disconnect();
+          setTimeout(function() {
+            observer.observe(document.body, observerOptions);
+          }, 0);
+        }
+      });
     });
-  });
 
-  observer.observe(document.body, observerOptions);
-}
+    observer.observe(document.body, observerOptions);
+  }
+});
 
 // Listen to messages from the browser action
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
-    if (request.link === 'all') {
+    if (request.action === 'link') {
       sendResponse({
-        'linkCount': recursiveLink(document.body)
+        linkCount: recursiveLink(document.body)
+      });
+    } else if (request.action === 'hostname') {
+      sendResponse({
+        hostname: window.location.hostname
       });
     }
   });
