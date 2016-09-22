@@ -24,7 +24,8 @@ var EXCLUDED_TAGS = {
   INPUT: true,
   FORM: true,
   PRE: true,
-  CODE: true,
+  // Every example site seems to use this...
+  // CODE: true,
   H1: true,
 };
 
