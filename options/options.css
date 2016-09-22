@@ -23,7 +23,7 @@ input {
 
 /* Navigation bar styles */
 nav {
-    margin-bottom: 20px;
+    margin-bottom: 14px;
 }
 
 nav > ul {
@@ -35,6 +35,7 @@ nav > ul {
 nav li {
     display: inline-block;
     box-sizing: border-box;
+    padding-bottom: 2px;
     margin-right: 8px;
     border-bottom: 2px solid lightgray;
 }

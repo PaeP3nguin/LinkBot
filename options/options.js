@@ -2,9 +2,10 @@ $(function() {
   var navItems = $('nav li');
 
   var checkBoxes = $(':checkbox');
-  var reset = $('#reset');
+  var resetButton = $('#reset');
 
   var hostList = $('#host-list');
+  var restoreHostsButton = $('#restore-hosts');
 
   var OPTIONS;
 
@@ -16,11 +17,16 @@ $(function() {
   chrome.storage.sync.get(DEFAULT_OPTIONS, function(loaded) {
     OPTIONS = loaded;
 
+    if (Object.keys(OPTIONS.excludedHostnames).length === 0) {
+      OPTIONS.excludedHostnames = DEFAULT_EXCLUDED_HOSTNAMES;
+    }
+
     updateCheckboxes();
     checkBoxes.change(saveCheckboxOption);
-    reset.click(resetCheckboxDefaults);
+    resetButton.click(resetCheckboxDefaults);
 
     populateHosts();
+    restoreHostsButton.click(restoreDefaultHosts);
   });
 
   function saveCheckboxOption(ev) {
@@ -44,9 +50,22 @@ $(function() {
     });
   }
 
+  function restoreDefaultHosts() {
+    $.extend(OPTIONS.excludedHostnames, DEFAULT_EXCLUDED_HOSTNAMES);
+    populateHosts();
+  }
+
   function populateHosts() {
+    hostList.empty();
     $.each(OPTIONS.excludedHostnames, function(host) {
       var item = $('<li><span id="close">✖</span><span>' + host + '</span></li>');
+      item.data('host', host);
+      item.click(function(ev) {
+        var item = $(this);
+        delete OPTIONS.excludedHostnames[item.data('host')];
+        item.remove();
+        chrome.storage.sync.set(OPTIONS);
+      });
       hostList.append(item);
     });
   }
