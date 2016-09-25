@@ -43,6 +43,11 @@ chrome.storage.sync.get(DEFAULT_OPTIONS, function(loaded) {
     return;
   }
 
+  // Allow reddit comments to be linked
+  if (window.location.hostname === "www.reddit.com") {
+    delete EXCLUDED_TAGS.FORM;
+  }
+
   if (OPTIONS.linkOnLoad) {
     recursiveLink(document.body);
   }
@@ -219,10 +224,10 @@ function linkTextNode(node) {
     return '<a href="//' + part + '">' + match + '</a>';
   });
 
-  if (window.location.hostname === "www.reddit.com") {
-    newText = newText.replace(SUBREDDIT_REGEX, function(match) {
+  if (OPTIONS.linkReddit && window.location.hostname === "www.reddit.com") {
+    newText = newText.replace(SUBREDDIT_REGEX, function(match, part) {
       urlCount++;
-      return '<a href="www.reddit.com/">' + match + '</a>';
+      return '<a href="//www.reddit.com/' + part + '">' + match + '</a>';
     });
   }
 

@@ -100,4 +100,4 @@ var EMAIL_REGEX = /\b[\w\u00a1-\uffff!#$%&'*+/=?^`{|}~-]+(?:\.[\w\u00a1-\uffff!#
   // Start after word boundary
   \b
 */
-var SUBREDDIT_REGEX = /\br\/[a-z0-9][a-z0-9_]{2,20}\b/gi;
+var SUBREDDIT_REGEX = /(?:\b|\/)(r\/[a-z0-9][a-z0-9_]{2,29})\b/gi;
