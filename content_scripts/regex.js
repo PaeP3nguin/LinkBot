@@ -73,7 +73,7 @@
 var URL_REGEX = /\b(?:(?:https?|ftp):\/\/)?((?:(?:[01]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[01]?\d?\d|2[0-4]\d|25[0-5])){3}|(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+(?:\.(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+)*\.(?:com?|net|org|edu|gov|cc|in(?:fo)?|io|bi(?:z|d)|mobi|tv|bz|fm|am|me|ly|gl|gdn?|do(?:wnload)?|tw|us|tk|cn|de|uk|ru|nl|eu|br|au|fr|it|pl|jp|ws|ca|ws|es|ch|be|im|pr|pw|gs|nu|ie|mn|mp|rs|vg|lu|xn--[a-z\u00a1-\uffff\d-]{4,59}|xyz|top?|wang|win|cl(?:ub|ick)|li(?:nk)?|vip|online|science|si(?:te)?|racing|date|bar))(?::\d{2,5})?(?:[\/?#]\S*[a-z\u00a1-\uffff\d=])?)\b/gi;
 
 /*
-  //Start after word boundary
+  // Start after word boundary
   \b
     // Everything before the @ sign
     [\w\u00a1-\uffff!#$%&'*+/=?^`{|}~-]+(?:\.[\w\u00a1-\uffff!#$%&'*+/=?^`{|}~-]+)*
@@ -95,3 +95,9 @@ var URL_REGEX = /\b(?:(?:https?|ftp):\/\/)?((?:(?:[01]?\d?\d|2[0-4]\d|25[0-5])(?
   \b
 */
 var EMAIL_REGEX = /\b[\w\u00a1-\uffff!#$%&'*+/=?^`{|}~-]+(?:\.[\w\u00a1-\uffff!#$%&'*+/=?^`{|}~-]+)*@(?:(?:[01]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[01]?\d?\d|2[0-4]\d|25[0-5])){3}|(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+(?:\.(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))[a-z\u00a1-\uffff\d]?\b/gi;
+
+/*
+  // Start after word boundary
+  \b
+*/
+var SUBREDDIT_REGEX = /\br\/[a-z0-9][a-z0-9_]{2,20}\b/gi;

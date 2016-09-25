@@ -219,6 +219,13 @@ function linkTextNode(node) {
     return '<a href="//' + part + '">' + match + '</a>';
   });
 
+  if (window.location.hostname === "www.reddit.com") {
+    newText = newText.replace(SUBREDDIT_REGEX, function(match) {
+      urlCount++;
+      return '<a href="www.reddit.com/">' + match + '</a>';
+    });
+  }
+
   if (emails.length) {
     // Put emails back in, if any
     newText = newText.replace(TEMP_CHAR_REGEX, function() {
