@@ -1,13 +1,13 @@
 {
    "name": "LinkBot",
-   "version": "1.0",
+   "version": "1.0.1",
    "manifest_version": 2,
    "description": "Finds links and emails in text and makes them clickable.",
    "icons": {
-      "16": "promo/linkbot-round-16.png",
-      "32": "promo/linkbot-round-32.png",
-      "48": "promo/linkbot-round-48.png",
-      "128": "promo/linkbot-round-128.png"
+      "16": "img/linkbot-round-16.png",
+      "32": "img/linkbot-round-32.png",
+      "48": "img/linkbot-round-48.png",
+      "128": "img/linkbot-round-128.png"
    },
    "permissions": [
       "<all_urls>",
@@ -17,8 +17,8 @@
       "default_title": "LinkBot",
       "default_popup": "browser_action/browser_action.html",
       "default_icon": {
-         "19": "promo/linkbot-round-19.png",
-         "38": "promo/linkbot-round-38.png"
+         "19": "img/linkbot-round-19.png",
+         "38": "img/linkbot-round-38.png"
       }
    },
    "content_scripts": [{
