@@ -224,7 +224,7 @@ function linkTextNode(node) {
     return '<a href="//' + part + '">' + match + '</a>';
   });
 
-  if (OPTIONS.linkReddit && window.location.hostname === "www.reddit.com") {
+  if (OPTIONS.linkReddit || window.location.hostname === "www.reddit.com") {
     newText = newText.replace(SUBREDDIT_REGEX, function(match, part) {
       urlCount++;
       return '<a href="//www.reddit.com/' + part + '">' + match + '</a>';
