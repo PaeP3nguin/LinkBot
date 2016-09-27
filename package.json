@@ -1,0 +1,10 @@
+{
+  "name": "LinkBot",
+  "version": "1.0.3",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-compress": "^1.3.0"
+  }
+}

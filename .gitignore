@@ -2,3 +2,4 @@
 *.sublime-workspace
 promo/*
 *.zip
+node_modules/*
