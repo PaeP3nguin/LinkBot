@@ -14,4 +14,4 @@ A few examples that LinkBot will find:
 [Install LinkBot on the Chrome Web Store.](https://chrome.google.com/webstore/detail/chnfcfcbnhloogdohcmjogkklghefofm). To exclude a page from being linked, just click the LinkBot icon and select "Don't run on this page."
 
 ## Implementation
-The core of LinkBot is a pair of custom regular expressions, one to find URLs and another for emails. A regular expression to capture the entire set of possible URLs is extremely tricky to compose and may produce false positive, so LinkBot favors accurate matching of common URLs. The regexes, along with informative comments, can be found in [content_scripts/regex.js] (https://github.com/PaeP3nguin/LinkBot/blob/master/content_scripts/regex.js).
+The core of LinkBot is a pair of custom regular expressions, one to find URLs and another for emails. A regular expression to capture the entire set of possible URLs is extremely tricky to compose and may produce false positive, so LinkBot favors accurate matching of common URLs. The regexes, along with informative comments, can be found in [content_scripts/regex.js](https://github.com/PaeP3nguin/LinkBot/blob/master/content_scripts/regex.js).
