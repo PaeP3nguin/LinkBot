@@ -62,7 +62,7 @@ chrome.storage.sync.get(DEFAULT_OPTIONS, function(loaded) {
     // Watch for DOM changes
     var observer = new MutationObserver(function(mutations) {
       mutations.forEach(function(m) {
-        if (areParentsExcluded(m.target)) {
+        if (!shouldLinkParents(m.target) || !shouldLink(m.target)) {
           return;
         }
 
@@ -73,7 +73,10 @@ chrome.storage.sync.get(DEFAULT_OPTIONS, function(loaded) {
         } else if (m.type === "childList") {
           // Added or removed stuff somewhere
           for (var i = 0, l = m.addedNodes.length; i < l; i++) {
-            linkCount += linkSingleNode(m.addedNodes[i]);
+            var child = m.addedNodes[i];
+            if (shouldLink(child)) {
+              linkCount += linkSingleNode(child);
+            }
           }
         }
 
@@ -126,18 +129,27 @@ function linkSingleNode(node) {
   return 0;
 }
 
-// Test if any of the parents of a node are in EXCLUDED_TAGS or are editable
-function areParentsExcluded(node) {
+// Returns false if any of the parents of a node should not be linkified.
+function shouldLinkParents(node) {
   var parent = node.parentNode;
   while (parent !== null) {
-    if (EXCLUDED_TAGS.hasOwnProperty(parent.tagName) || isNodeEditable(parent)) {
-      return true;
-    } else {
+    if (shouldLink(parent)) {
       parent = parent.parentNode;
+    } else {
+      return false;
     }
   }
 
-  return false;
+  return true;
+}
+
+// Returns true if we should link the node.
+function shouldLink(node) {
+  if (EXCLUDED_TAGS.hasOwnProperty(node.tagName) || isNodeEditable(node)) {
+    return false;
+  } else {
+    return true;
+  }
 }
 
 // Tests whether a node is contentEditable
