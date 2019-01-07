@@ -42,9 +42,9 @@ chrome.storage.sync.get(DEFAULT_OPTIONS, function(loaded) {
   if (OPTIONS.excludedHostnames.hasOwnProperty(window.location.hostname)) {
     return;
   }
- 
+
   // Update the EXCLUDED_TAGS by user option
-  if (OPTIONS.linkOnPre){
+  if (OPTIONS.linkOnPre) {
     EXCLUDED_TAGS.PRE = false;
   } else {
     EXCLUDED_TAGS.PRE = true;
