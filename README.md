@@ -18,3 +18,6 @@ The core of LinkBot is a pair of custom regular expressions, one to find URLs an
 
 ## Development
 Installing this extension to test it locally is easy. Chrome extensions don't need to be built or compiled and you can just install the code directly. Just follow [Google's instructions](https://developer.chrome.com/extensions/getstarted#manifest) (ignore the stuff about the manifest, just follow the three steps).
+
+## Contributing
+If you'd like to contribute to LinkBot, just send a PR. Before making a large change, please file an issue first so we can discuss.
