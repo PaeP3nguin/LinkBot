@@ -42,6 +42,13 @@ chrome.storage.sync.get(DEFAULT_OPTIONS, function(loaded) {
   if (OPTIONS.excludedHostnames.hasOwnProperty(window.location.hostname)) {
     return;
   }
+ 
+  // Update the EXCLUDED_TAGS by user option
+  if (OPTIONS.linkOnPre){
+    EXCLUDED_TAGS.PRE = false;
+  } else {
+    EXCLUDED_TAGS.PRE = true;
+  }
 
   // Allow reddit comments to be linked
   if (window.location.hostname === "www.reddit.com") {
@@ -145,7 +152,7 @@ function shouldLinkParents(node) {
 
 // Returns true if we should link the node.
 function shouldLink(node) {
-  if (EXCLUDED_TAGS.hasOwnProperty(node.tagName) || isNodeEditable(node)) {
+  if (EXCLUDED_TAGS[node.tagName] || isNodeEditable(node)) {
     return false;
   } else {
     return true;
@@ -196,7 +203,7 @@ function nodeFilter(node) {
       }
 
       // Skip node and all descendants of any excluded tags
-      if (EXCLUDED_TAGS.hasOwnProperty(node.tagName)) {
+      if (EXCLUDED_TAGS[node.tagName]) {
         return NodeFilter.FILTER_REJECT;
       }
 

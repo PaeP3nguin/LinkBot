@@ -3,6 +3,7 @@ var DEFAULT_OPTIONS = {
     linkOnChange: true,
     linkEmails: true,
     linkReddit: false,
+    linkOnPre: true,
     excludedHostnames: {}
 };
 

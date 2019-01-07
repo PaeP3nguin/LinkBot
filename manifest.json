@@ -1,6 +1,6 @@
 {
    "name": "LinkBot",
-   "version": "1.0.6",
+   "version": "1.0.7",
    "manifest_version": 2,
    "description": "Finds links and emails in text and makes them clickable.",
    "icons": {
