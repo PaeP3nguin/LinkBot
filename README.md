@@ -15,3 +15,6 @@ A few examples that LinkBot will find:
 
 ## Implementation
 The core of LinkBot is a pair of custom regular expressions, one to find URLs and another for emails. A regular expression to capture the entire set of possible URLs is extremely tricky to compose and may produce false positive, so LinkBot favors accurate matching of common URLs. The regexes, along with informative comments, can be found in [content_scripts/regex.js](https://github.com/PaeP3nguin/LinkBot/blob/master/content_scripts/regex.js).
+
+# Development
+Installing this extension to test it locally is easy. Chrome extensions don't need to be built or compiled and you can just install the code directly. Just follow [Google's instructions](https://developer.chrome.com/extensions/getstarted#manifest) (ignore the stuff about the manifest, just follow the three steps).
