@@ -1,6 +1,6 @@
 {
    "name": "LinkBot",
-   "version": "1.0.7",
+   "version": "1.0.8",
    "manifest_version": 2,
    "description": "Finds links and emails in text and makes them clickable.",
    "icons": {
@@ -28,6 +28,7 @@
          "content_scripts/regex.js",
          "content_scripts/main.js"
       ],
+      "all_frames": true,
       "matches": ["<all_urls>"]
    }],
    "options_ui": {
