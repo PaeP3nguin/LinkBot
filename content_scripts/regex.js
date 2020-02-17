@@ -58,9 +58,9 @@
           // URL shorteners
           ly|gl|gdn?|do(?:wnload)?|tw|
           // ccTLDs
-          us|tk|cn|de|uk|ru|nl|eu|br|au|fr|it|pl|jp|ws|ca|ws|es|ch|be|im|pr|pw|gs|nu|ie|is|mn|mp|nz|rs|sh|vg|lu|ug|xn--[a-z\d-]{4,59}|
+          us|tk|cf|cn|de|uk|ru|nl|eu|br|au|fr|it|pl|jp|ws|ca|ws|es|ch|be|im|pr|pw|gs|nu|ie|is|mn|mp|nz|rs|sh|vg|lu|ug|xn--[a-z\d-]{4,59}|
           // gTLDs
-          xyz|top?|wang|win|cl(?:ub|ick)|li(?:nk)?|vip|online|science|engineering|si(?:te)?|racing|date|bar
+          xyz|top?|wang|win|cl(?:ub|ick)|li(?:nk)?|vip|online|science|engineering|si(?:te)?|racing|date|bar|chat|website|social|life|lol|ai|group|space|town|pro|love|host|fyi|zone|estate|moe|world|work|lgbt|church
         )
     )
     // Port number
@@ -70,7 +70,7 @@
   // Overall URL ends at a word boundary
   \b
 */
-var URL_REGEX = /\b(?:(?:https?|ftp):\/\/)?((?:(?:[01]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[01]?\d?\d|2[0-4]\d|25[0-5])){3}|(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+(?:\.(?:[a-z\u00a1-\uffff\d]+--?)*[a-z\u00a1-\uffff\d]+)*\.(?:com?|net|org|edu|gov|cc|in(?:fo)?|io|bi(?:z|d)|mobi|tv|bz|fm|am|me|ly|gl|gdn?|do(?:wnload)?|tw|us|tk|cn|de|uk|ru|nl|eu|br|au|fr|it|pl|jp|ws|ca|ws|es|ch|be|im|pr|pw|gs|nu|ie|is|mn|mp|nz|rs|sh|vg|lu|ug|xn--[a-z\u00a1-\uffff\d-]{4,59}|xyz|top?|wang|win|cl(?:ub|ick)|li(?:nk)?|vip|online|science|engineering|si(?:te)?|racing|date|bar))(?::\d{2,5})?(?:[\/?#]\S*[a-z\u00a1-\uffff\d=])?)\b/gi;
+var URL_REGEX = /\b(?:(?:https?|ftp):\/\/)?((?:(?:[01]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[01]?\d?\d|2[0-4]\d|25[0-5])){3}|(?:[a-z\u00a1-\uffff\d]+-)*[a-z\u00a1-\uffff\d]+(?:\.(?:[a-z\u00a1-\uffff\d]+--?)*[a-z\u00a1-\uffff\d]+)*\.(?:com?|net|org|edu|gov|cc|in(?:fo)?|io|bi(?:z|d)|mobi|tv|bz|fm|am|me|ly|gl|gdn?|do(?:wnload)?|tw|us|tk|cf|cn|de|uk|ru|nl|eu|br|au|fr|it|pl|jp|ws|ca|ws|es|ch|be|im|pr|pw|gs|nu|ie|is|mn|mp|nz|rs|sh|vg|lu|ug|xn--[a-z\u00a1-\uffff\d-]{4,59}|xyz|top?|wang|win|cl(?:ub|ick)|li(?:nk)?|vip|online|science|engineering|si(?:te)?|racing|date|bar|chat|website|social|life|lol|ai|group|space|town|pro|love|host|fyi|zone|estate|moe|world|work|lgbt|church))(?::\d{2,5})?(?:[\/?#]\S*[a-z\u00a1-\uffff\d=])?)\b/gi;
 
 /*
   // Start after word boundary
